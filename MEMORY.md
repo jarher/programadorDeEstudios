@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-3.2 — `DashboardViewModel` y resumen general (2026-10-26)  
-**Estado global**: Fase 2 completada (3/3); Fase 3 en curso (2/4); próxima T-3.3
+**Último hito cerrado**: T-3.3 — `DashboardView` y cableado de arranque (2026-10-26)  
+**Estado global**: Fase 2 completada (3/3); Fase 3 en curso (3/4); próxima T-3.4
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -27,7 +27,8 @@
 | Equipo de agentes | `coordinator` + 4 subagentes opencode locales (no versionados) |
 | Ventana Fluent | `FluentWindow` con Mica, title bar y toggle claro/oscuro (T-3.1) |
 | ViewModel del dashboard | `DashboardViewModel` + `TopicItemViewModel`: listado, toggle de completado y resumen (T-3.2) |
-| Dashboard / analítica | Pendiente (T-3.3 a Fase 5) |
+| Vista del dashboard | `DashboardView` con resumen, tarjetas, progreso y checkbox; composition root en `App` (T-3.3) |
+| Dashboard / analítica | Pendiente (T-3.4 a Fase 5) |
 
 ---
 
@@ -37,11 +38,11 @@
 | :--- | :---: | :---: | :--- |
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
 | Fase 2 — Temporizador y Toasts | 3 | 3/3 | **Completada** |
-| Fase 3 — Dashboard y temáticas | 4 | 2/4 | En curso |
+| Fase 3 — Dashboard y temáticas | 4 | 3/4 | En curso |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-3.3` — `DashboardView` con tarjetas de temáticas, progreso hacia la meta y checkbox de marcaje (Fase 3).
+**Próxima tarea**: `T-3.4` — `AddTopicDialog` modal ligero para registrar temáticas con selector de color (Fase 3).
 
 ---
 
@@ -65,6 +66,7 @@
 | 2026-10-26 | T-0.0 | `0af9b1c` | 00-coordinator | build 0/0; tests 24/24 | Agentes opencode locales y `.opencode/` ignorado |
 | 2026-10-26 | T-3.1 | `ddfe8c8` | 03-ui-presentation | build 0/0; tests 24/24 | Ventana Fluent con Mica, title bar y tema claro/oscuro |
 | 2026-10-26 | T-3.2 | `486f412` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
+| 2026-10-26 | T-3.3 | `—` | 03-ui-presentation | build 0/0; tests 24/24; smoke OK | `DashboardView` Fluent con resumen, tarjetas, progreso y checkbox; cableado en `App` |
 
 ---
 
@@ -125,9 +127,11 @@ programadorDeEstudios/
 │   │   └── Services/                   # TimerService, WindowsNotificationService
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
 │       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
-│       ├── App.xaml / App.xaml.cs      # recursos Wpf.Ui y tema inicial del sistema
+│       ├── App.xaml / App.xaml.cs      # recursos Wpf.Ui, tema y composition root (SQLite → repo → VM)
+│       ├── Converters/                 # HexToBrushConverter, InverseBooleanConverter
 │       ├── MainWindow.xaml / .xaml.cs  # shell Fluent: Mica, title bar y toggle de tema
-│       └── ViewModels/                 # DashboardViewModel, TopicItemViewModel
+│       ├── ViewModels/                 # DashboardViewModel, TopicItemViewModel
+│       └── Views/                      # DashboardView.xaml + code-behind mínimo
 ├── tests/
 │   └── StudyTracker.Core.Tests/        # net8.0
 │       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0, TimeProvider.Testing 8.10.0
@@ -166,6 +170,11 @@ programadorDeEstudios/
 * **ViewModels del dashboard**: `DashboardViewModel` depende solo de `ITopicRepository`; la persistencia ocurre exclusivamente en `ToggleCompletedAsync` y la agregación vive en `UpdateSummary()`. `ProgressPercentage` y `OverallProgressPercentage` se topan a 100 con `Math.Clamp`.
 * **Cobertura de ViewModels**: no existe proyecto de pruebas para `StudyTracker.UI` (`net8.0-windows10.0.19041.0`); T-3.2 se validó por inspección y gates. Ruta futura: extraer la lógica pura a una librería `net8.0` o crear `tests/StudyTracker.UI.Tests`.
 * **`CompletedAt` tras el toggle**: el ViewModel muestra `DateTime.Now` local y la BD persiste su propio instante; tras recargar prevalece el valor de SQLite.
+* **Composition root de la UI**: `App.OnStartup` aplica el tema, inicializa `DatabaseInitializer`, construye `TopicRepository` y `DashboardViewModel`, crea `MainWindow(viewModel)`, hace `Show()` y llama `LoadAsync()` una sola vez. No hay contenedor DI ni `MessageBox`; los errores se muestran en el banner de `DashboardView`.
+* **Arranque verificado**: smoke test con la app real (`RUNNING ok`), BD creada en `%LOCALAPPDATA%\StudyTracker\study_tracker.db` sin datos residuales (0/0) y UI Automation confirmó el estado vacío y el resumen en ceros.
+* **Deuda de la vista**: `IsChecked` es `OneWay`; si `SetStatusAsync` devuelve `false`, el checkbox puede quedar marcado visualmente hasta recargar (el banner de error sí aparece). `MainWindow.xaml` conserva los estilos `DisplayTitle`, `LeadText` y `Eyebrow` sin uso tras extraer el contenido al `UserControl`.
+* **RAM en reposo**: en Debug la app mide ~78 MB privados / ~158 MB working set, por encima del objetivo de 50 MB; apunta al runtime WPF/WPF-UI y requiere perfilado en una tarea aparte.
+* **Pendiente ajeno a las tareas**: `.gitignore` tiene un `+opencode.json` sin commitear, previo a T-3.3; no se incluyó en el commit de la tarea.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -186,11 +195,11 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-3.3**: crear `Views/DashboardView.xaml` con tarjetas de temáticas, barra de progreso hacia la meta y checkbox de marcaje, y cablearlo al `DashboardViewModel` (composición de `DatabaseInitializer` + `TopicRepository` en `App.xaml.cs`). Cerrar con:
+Ejecutar **T-3.4**: crear `Views/AddTopicDialog` (ventana modal ligera con título, descripción, meta de horas y selector de color), añadir el comando de alta en `DashboardViewModel` y conectarlo al botón `+ Nueva Temática` del dashboard. Cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-3.3 -Type feat -Scope ui `
-  -Message "dashboard view with topic cards and progress" -Agent 03-ui-presentation `
+  -TaskId T-3.4 -Type feat -Scope ui `
+  -Message "add topic dialog and create command" -Agent 03-ui-presentation `
   -Paths src/StudyTracker.UI, studyProgrammer/specs/001-study-tracker/tasks.md, MEMORY.md
 ```

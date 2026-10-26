@@ -4,6 +4,7 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:views="clr-namespace:StudyTracker.UI.Views"
                  mc:Ignorable="d"
                  Title="StudyProgrammer"
                  Width="1120"
@@ -205,109 +206,7 @@
                 </Grid>
             </Border>
 
-            <Grid Grid.Column="1" Margin="40,28,40,32">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <StackPanel>
-                    <TextBlock Text="PANEL DE ESTUDIO" Style="{StaticResource Eyebrow}" />
-                    <TextBlock Text="Tu progreso, en un solo lugar."
-                               Style="{StaticResource DisplayTitle}"
-                               MaxWidth="640"
-                               HorizontalAlignment="Left"
-                               Margin="0,8,0,0" />
-                    <TextBlock Text="Un espacio sereno para organizar temáticas, sostener el enfoque y ver cómo avanzas día a día."
-                               Style="{StaticResource LeadText}"
-                               MaxWidth="600"
-                               HorizontalAlignment="Left"
-                               Margin="0,12,0,0" />
-                </StackPanel>
-
-                <Grid Grid.Row="1" Margin="0,32,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="296" />
-                    </Grid.ColumnDefinitions>
-
-                    <ui:Card Grid.Column="0" VerticalAlignment="Top">
-                        <StackPanel Margin="28">
-                            <Border Width="56"
-                                    Height="56"
-                                    CornerRadius="16"
-                                    HorizontalAlignment="Left"
-                                    Background="{DynamicResource AccentFillColorDefaultBrush}">
-                                <ui:SymbolIcon Symbol="Sparkle24"
-                                               FontSize="24"
-                                               Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
-                                               HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                            </Border>
-
-                            <TextBlock Text="La base visual está lista"
-                                       FontSize="22"
-                                       FontWeight="SemiBold"
-                                       TextWrapping="Wrap"
-                                       Margin="0,20,0,0" />
-                            <TextBlock Text="La ventana Fluent, el fondo Mica y el cambio de tema ya están activos. El dashboard de temáticas llega en las próximas tareas."
-                                       Style="{StaticResource LeadText}"
-                                       Margin="0,8,0,0" />
-
-                            <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
-                                <Border Background="{DynamicResource AccentFillColorDefaultBrush}"
-                                        CornerRadius="6"
-                                        Padding="10,4">
-                                    <TextBlock Text="Fase 3"
-                                               FontSize="12"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}" />
-                                </Border>
-                                <TextBlock Text="Siguiente: dashboard y temáticas"
-                                           Style="{StaticResource MetaText}"
-                                           Margin="12,0,0,0"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                        </StackPanel>
-                    </ui:Card>
-
-                    <ui:Card Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Top">
-                        <StackPanel Margin="24">
-                            <TextBlock Text="ENTORNO VISUAL" Style="{StaticResource SectionLabel}" />
-
-                            <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
-                                <ui:SymbolIcon Symbol="WeatherMoon24"
-                                               FontSize="18"
-                                               Foreground="{DynamicResource AccentFillColorDefaultBrush}" />
-                                <StackPanel Margin="12,0,0,0">
-                                    <TextBlock Text="Tema adaptable" FontSize="13" FontWeight="SemiBold" />
-                                    <TextBlock Text="Claro u oscuro, al instante." Style="{StaticResource MetaText}" />
-                                </StackPanel>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                                <ui:SymbolIcon Symbol="Layer24"
-                                               FontSize="18"
-                                               Foreground="{DynamicResource AccentFillColorDefaultBrush}" />
-                                <StackPanel Margin="12,0,0,0">
-                                    <TextBlock Text="Mica" FontSize="13" FontWeight="SemiBold" />
-                                    <TextBlock Text="Fondo translúcido de Windows 11." Style="{StaticResource MetaText}" />
-                                </StackPanel>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                                <ui:SymbolIcon Symbol="Window24"
-                                               FontSize="18"
-                                               Foreground="{DynamicResource AccentFillColorDefaultBrush}" />
-                                <StackPanel Margin="12,0,0,0">
-                                    <TextBlock Text="Ventana Fluent" FontSize="13" FontWeight="SemiBold" />
-                                    <TextBlock Text="Controles y tipografía nativos." Style="{StaticResource MetaText}" />
-                                </StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-                    </ui:Card>
-                </Grid>
-            </Grid>
+            <views:DashboardView Grid.Column="1" Margin="40,28,40,32" />
         </Grid>
     </Grid>
 </ui:FluentWindow>

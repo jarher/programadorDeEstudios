@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Automation;
+using StudyTracker.UI.ViewModels;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -7,9 +8,12 @@ namespace StudyTracker.UI;
 
 public partial class MainWindow : FluentWindow
 {
-    public MainWindow()
+    public MainWindow(DashboardViewModel viewModel)
     {
+        ArgumentNullException.ThrowIfNull(viewModel);
+
         InitializeComponent();
+        DataContext = viewModel;
         UpdateThemeButton(ApplicationThemeManager.GetAppTheme());
     }
 
