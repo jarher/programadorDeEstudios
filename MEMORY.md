@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-2.3 — Notificaciones Windows (2026-10-26)  
-**Estado global**: Fase 2 completada (3/3); próxima Fase 3 — T-3.1
+**Último hito cerrado**: T-0.0 — Equipo opencode local (2026-10-26)  
+**Estado global**: Fase 2 completada (3/3); agentes locales configurados; próxima T-3.1
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -24,6 +24,7 @@
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
 | Temporizador | `TimerService` + 10 pruebas deterministas (T-2.1/T-2.2) |
 | Notificaciones Windows | `WindowsNotificationService` con toasts y acciones interactivas (T-2.3) |
+| Equipo de agentes | `coordinator` + 4 subagentes opencode locales (no versionados) |
 | UI Fluent / analítica | Pendiente (Fases 3-5) |
 
 ---
@@ -59,6 +60,7 @@
 | 2026-10-26 | T-2.1 | `a9f50e2` | 02-timer-notifications | build 0/0; tests 14/14 | `ITimerService` y `TimerService` con `TimeProvider` |
 | 2026-10-26 | T-2.2 | `0092d5e` | 04-qa-verification | build 0/0; tests 24/24 | 10 pruebas deterministas con `FakeTimeProvider` |
 | 2026-10-26 | T-2.3 | `1d59666` | 02-timer-notifications | build 0/0; tests 24/24 | Toasts con acciones interactivas y Core multi-target |
+| 2026-10-26 | T-0.0 | — | 00-coordinator | build 0/0; tests 24/24 | Agentes opencode locales y `.opencode/` ignorado |
 
 ---
 
@@ -78,18 +80,21 @@
 * **ADR-012 (Intensidad del Mapa de Calor)**: cuatro niveles según minutos diarios acumulados: 0 = 0; 1 = 1-29; 2 = 30-59; 3 = 60-119; 4 = 120 o más.
 * **ADR-013 (Semántica del Temporizador)**: `ElapsedTime` conserva el tiempo efectivo al pausar o detener; `Start` reinicia; el evento `Tick` entrega el tiempo restante cada 250 ms y se inyecta `TimeProvider` para pruebas deterministas.
 * **ADR-014 (Notificaciones y Multi-target)**: Core apunta a `net8.0` y `net8.0-windows10.0.19041.0`; `Microsoft.Toolkit.Uwp.Notifications` 7.1.3 solo se referencia en el TFM de Windows y `WindowsNotificationService` se excluye del TFM portable. Las acciones de los toasts se exponen mediante `ActionInvoked`.
+* **ADR-015 (Equipo opencode Local)**: `coordinator` es el agente primario y delega en `data-core`, `timer-notifications`, `ui-presentation` y `qa-verification`. Los permisos por rutas impiden que el coordinador edite código y que los especialistas salgan de su capa. `.opencode/` está ignorado por Git; las fichas de `.specify/agents` siguen siendo la fuente canónica y el `default_agent` se define en `.opencode/opencode.json` local.
 
 ---
 
 ## 5. Equipo de Agentes
 
-| ID | Rol | Estado | Ficha |
-| :--- | :--- | :--- | :--- |
-| **`00-coordinator`** | Orquestación, ramas, gates | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
-| **`01-data-core`** | SQLite, Dapper, dominio | Fase 1 completada | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
-| **`02-timer-notifications`** | TimerService, WinRT Toasts | Fase 2 completada | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
-| **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | Siguiente (Fase 3) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
-| **`04-qa-verification`** | xUnit, criterios Given-When-Then | Fase 2 completada | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
+| ID | Rol | Agente opencode | Estado | Ficha |
+| :--- | :--- | :--- | :--- | :--- |
+| **`00-coordinator`** | Orquestación, ramas, gates | `coordinator` (primary) | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
+| **`01-data-core`** | SQLite, Dapper, dominio, Stats | `data-core` (subagent) | Fase 1 completada | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
+| **`02-timer-notifications`** | TimerService, WinRT Toasts | `timer-notifications` (subagent) | Fase 2 completada | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
+| **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | `ui-presentation` (subagent) | Siguiente (Fase 3) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
+| **`04-qa-verification`** | xUnit, criterios Given-When-Then | `qa-verification` (subagent) | Fase 2 completada | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
+
+Los agentes operativos viven en `.opencode/agents/` y están ignorados por Git. Las fichas de `.specify/agents/` siguen siendo la fuente canónica. `default_agent: coordinator` se define en `.opencode/opencode.json`; en un clon sin esa carpeta, opencode cae en `build` con advertencia.
 
 ---
 
@@ -101,6 +106,9 @@ programadorDeEstudios/
 ├── opencode.json                       # MCP git + GitHub y permisos
 ├── StudyTracker.sln
 ├── MEMORY.md                           # Este archivo (memoria única)
+├── .opencode/                          # local, ignorado por Git
+│   ├── agents/                         # coordinator, data-core, timer-notifications, ui-presentation, qa-verification
+│   └── opencode.json                   # default_agent: coordinator
 ├── PLAN_ESPECIFICACION.md
 ├── src/
 │   ├── StudyTracker.Core/              # net8.0 + net8.0-windows10.0.19041.0
@@ -146,6 +154,8 @@ programadorDeEstudios/
 * **Pruebas con BD temporal**: llamar `SqliteConnection.ClearAllPools()` antes de borrar el archivo, por el pooling de conexiones.
 * **Pruebas del temporizador**: `FakeTimeProvider` (8.10.0) permite avanzar el reloj sin esperas reales; los tests cubren pausa, stop, reinicio y finalización única.
 * **Notificaciones**: `Microsoft.Toolkit.Uwp.Notifications` 7.1.3 funciona sin MSIX en Windows 10 1809+; el servicio solo se compila en el TFM de Windows y las acciones llegan por `ActionInvoked`.
+* **Agentes opencode**: `.opencode/` está ignorado por Git; los agentes son locales. Se recrean desde `AGENTS.md` §3.2 y las fichas canónicas. El coordinador no edita código y los subagentes no hacen commits.
+* **Cierre con scripts**: invocar `complete-task.ps1`/`commit-task.ps1` directamente con `&`, nunca a través de `rtk` (falla con `.ps1`). Solo el coordinador cierra tareas.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -166,7 +176,7 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-3.1**: iniciar la Fase 3 (dashboard y CRUD de temáticas) y cerrar con:
+Ejecutar **T-3.1** con el agente `coordinator` (requiere reiniciar opencode para cargar `.opencode/`). El coordinador debe delegar en `ui-presentation`, validar con `qa-verification` y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `

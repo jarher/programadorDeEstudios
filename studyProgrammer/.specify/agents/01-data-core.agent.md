@@ -11,7 +11,7 @@ context_files:
 target_directories:
   - src/StudyTracker.Core/Models
   - src/StudyTracker.Core/Data
-  - src/StudyTracker.Core/Repositories
+  - src/StudyTracker.Core/Services/StatsService.cs
 allowed_tools:
   - read_file
   - write_file
@@ -28,7 +28,7 @@ Implementar la capa de datos de alto rendimiento y el modelo de dominio en C# (.
 1. **Esquema Relacional**: Crear la clase `DatabaseInitializer` para aplicar el DDL con `PRAGMA foreign_keys = ON;`, creando las tablas `topics`, `study_sessions` y los índices correspondientes.
 2. **Modelos de Dominio**: Implementar las clases C# inmutables/limpias para `Topic`, `StudySession`, `TopicSummaryDto` y `DailyActivityDto`.
 3. **Repositorios**: Implementar `TopicRepository` y `SessionRepository` asegurando operaciones asíncronas (`async/await`) y consultas SQL parametrizadas para prevenir inyecciones.
-4. **Cálculo de Agregaciones**: Implementar consultas de cálculo de horas totales acumuladas y consolidación diaria para el mapa de calor.
+4. **Cálculo de Agregaciones**: Implementar consultas de cálculo de horas totales acumuladas y consolidación diaria para el mapa de calor. En T-5.1, implementar `StatsService` y su interfaz en `Services`/`Interfaces`.
 
 ## Restricciones
 - No incluir referencias a librerías de interfaz gráfica (WPF, WinUI, System.Windows).

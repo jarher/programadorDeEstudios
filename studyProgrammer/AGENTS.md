@@ -11,9 +11,9 @@ Este documento y los archivos en `.specify/agents/` definen el equipo de agentes
 flowchart TD
     User([Usuario / Requisitos]) <--> Coordinator[00. Agente Coordinador\nLead Orchestrator]
     
-    Coordinator --> Task1[T-1.x: Persistencia & Modelos]
+    Coordinator --> Task1[T-1.x y T-5.1: Persistencia, Modelos y Stats]
     Coordinator --> Task2[T-2.x: Temporizador & Toasts]
-    Coordinator --> Task3[T-3.x & T-4.x: Vistas Fluent & MVVM]
+    Coordinator --> Task3[T-3.x, T-4.x y T-5.2-T-5.3: Vistas y Analítica]
     Coordinator --> Task4[Validación & Quality Gates]
 
     Task1 --> AgentCore[01. Data & Core Agent\nSQLite + Dominio]
@@ -34,7 +34,7 @@ flowchart TD
 | Agente | Alcance Exclusivo | Límites Estrictos (NO TOCAR) | Archivos de Contexto Clave |
 | :--- | :--- | :--- | :--- |
 | **00. Coordinator (Lead)** | Orquestación, lectura de `tasks.md`, asignación de tareas, control de ramas git y gates de aprobación. | No implementa código de bajo nivel si un subagente está asignado. | `spec.md`, `plan.md`, `tasks.md`, `constitution.md` |
-| **01. Data & Core** | `StudyTracker.Core/Models`, `Data/`, `Repositories/`, SQLite DDL, scripts de migración. | No toca archivos XAML ni llamadas a APIs de UI de Windows. | `data-model.md`, `contracts/interfaces.md` |
+| **01. Data & Core** | `StudyTracker.Core/Models`, `Data/`, `Services/StatsService.cs`, SQLite DDL, scripts de migración. | No toca archivos XAML ni llamadas a APIs de UI de Windows. | `data-model.md`, `contracts/interfaces.md` |
 | **02. Timer & OS** | `StudyTracker.Core/Services/TimerService.cs`, `WindowsNotificationService.cs`, eventos WinRT. | No toca vistas ni consultas SQL directas. | `contracts/interfaces.md`, `spec.md` |
 | **03. UI & Presentation** | `StudyTracker.UI/Views`, `ViewModels`, `Controls`, estilos Fluent (Mica/Acrílico), LiveCharts. | No escribe consultas SQL directas ni lógica de SQLite (consume solo interfaces del Core). | `plan.md`, `contracts/interfaces.md` |
 | **04. QA & Verifier** | `tests/StudyTracker.Core.Tests/`, verificación de escenarios *Given-When-Then*, límites de RAM y benchmarks. | No modifica la lógica de negocio para hacer pasar pruebas; solo reporta discrepancias. | `spec.md`, `constitution.md` |
@@ -101,6 +101,35 @@ Reglas:
 5. El commit lo crea el script, no el agente: nunca ejecutar `git add` + `git commit` sueltos si existe una tarea asociada.
 6. La rama de publicación es `main`; los scripts abortan si el HEAD está en una rama distinta.
 7. `MEMORY.md` (raíz del repositorio) es el **libro único de desarrollo**: se lee al iniciar la sesión y se actualiza al cerrar cada tarea (progreso por fase, bitácora, próxima acción y ADR). No crear memorias por submódulo.
+
+---
+
+## 3.2. Ejecución real en opencode (local)
+
+Las fichas de §4 son la fuente canónica de roles. La capa operativa de opencode vive en `.opencode/agents/` y está **ignorada por Git** (`.opencode/` en `.gitignore`); se recrea desde esta sección y las fichas canónicas.
+
+| Rol canónico | Agente opencode | Modo | Edición permitida | Puede delegar |
+| :--- | :--- | :--- | :--- | :--- |
+| 00 Coordinator | `coordinator` | `primary` | `MEMORY.md`, `tasks.md` | `data-core`, `timer-notifications`, `ui-presentation`, `qa-verification`, `explore` |
+| 01 Data & Core | `data-core` | `subagent` | `Core/Models`, `Core/Data`, `I*Repository`, `IStats*`, `Services/Stats*` | No |
+| 02 Timer & OS | `timer-notifications` | `subagent` | `Core/Services/Timer*`, `*Notification*`, `Core/Notifications`, interfaces afines | No |
+| 03 UI & Presentation | `ui-presentation` | `subagent` | `src/StudyTracker.UI/**` | No |
+| 04 QA & Verification | `qa-verification` | `subagent` | `tests/**`; nunca producción | No |
+
+Correspondencia de herramientas: `read_file` → `read`, `write_file`/`edit_file` → `edit`, `run_command` → `bash`, `invoke_subagent` → `task`. La delegación se hace con `task` y `subagent_type`.
+
+Ruteo corregido:
+
+- `T-1.x` y `T-5.1` → `data-core`.
+- `T-2.x` → `timer-notifications`.
+- `T-3.x`, `T-4.x`, `T-5.2-T-5.3` → `ui-presentation`.
+- `T-5.4` y la validación de cualquier tarea → `qa-verification`; el cierre final siempre lo hace `coordinator`.
+
+Reglas de permisos:
+
+- `coordinator` no puede editar código; solo documentación de estado y cierre. Puede ejecutar build/test y los scripts de cierre, pero no `git add`/`commit`/`push` directos.
+- Los subagentes no pueden delegar ni preguntar al usuario: devuelven `REQUIERE_CLARIFICACION` al coordinador. Tampoco pueden hacer commits ni ejecutar los scripts de cierre.
+- `.opencode/opencode.json` fija `default_agent: coordinator` solo en esta máquina. Si un clon no tiene `.opencode/`, opencode cae en `build` con una advertencia; recrea los agentes locales con esta sección.
 
 ---
 

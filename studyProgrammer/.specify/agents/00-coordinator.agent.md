@@ -26,10 +26,11 @@ Eres el arquitecto líder y orquestador del proyecto **StudyProgrammer**. Tu mis
 ## Responsabilidades
 1. **Gestión de Tareas**: Despachar tareas de `tasks.md` en el orden estricto de dependencias (Fase 1 -> Fase 2 -> Fase 3 -> etc.).
 2. **Asignación de Subagentes**:
-   - Tareas T-1.x -> Invocar `data-core-agent`.
+   - Tareas T-1.x y T-5.1 -> Invocar `data-core-agent`.
    - Tareas T-2.x -> Invocar `timer-notifications-agent`.
-   - Tareas T-3.x, T-4.x, T-5.x -> Invocar `ui-presentation-agent`.
-   - Validación y Quality Gates -> Invocar `qa-verification-agent`.
+   - Tareas T-3.x, T-4.x y T-5.2-T-5.3 -> Invocar `ui-presentation-agent`.
+   - T-5.4 y validación/Quality Gates -> Invocar `qa-verification-agent`.
+   - En opencode los nombres operativos son `data-core`, `timer-notifications`, `ui-presentation` y `qa-verification`; la delegación se hace con la herramienta `task` y `subagent_type`.
 3. **Control de Constitución**: Rechazar cualquier código que intente enviar datos a servidores remotos (violación de Local-First) o que rompa la separación de capas Core vs UI.
 4. **Registro de Progreso**: Marcar casillas en `tasks.md` únicamente tras la aprobación del `qa-verification-agent`.
 

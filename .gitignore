@@ -96,6 +96,12 @@ yarn-error.log*
 pnpm-debug.log*
 
 # ---------------------------------------------------------------------
+# Configuración local de agentes opencode (no versionar)
+# Los agentes se recrean desde studyProgrammer/AGENTS.md
+# ---------------------------------------------------------------------
+.opencode/
+
+# ---------------------------------------------------------------------
 # Python / uvx (MCP alternativo basado en Python)
 # ---------------------------------------------------------------------
 __pycache__/
