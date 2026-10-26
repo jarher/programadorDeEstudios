@@ -70,13 +70,36 @@ studyProgrammer/.specify/scripts/powershell/complete-task.ps1 `
   -Agent 01-data-core
 ```
 
+### Comandos Git canónicos
+
+Los scripts `complete-task.ps1` y `commit-task.ps1` ejecutan **exactamente** esta secuencia desde la raíz del repositorio:
+
+```powershell
+# 1. Preparar todos los cambios de la tarea
+git add .
+
+# 2. Crear el commit (asunto + cuerpo con el trailer Task:)
+git commit -m "<tipo>(<ámbito>): <T-x.y> <descripción>
+
+Task: <T-x.y>
+Agent: <agente>
+Tests: <estado>
+Build: <estado>"
+
+# 3. Publicar en la rama principal
+git push origin main
+```
+
+En el primer push de una rama nueva (sin upstream) el script usa `git push -u origin main`; a partir de ahí usa siempre `git push origin main`.
+
 Reglas:
 
 1. `complete-task.ps1` ejecuta `dotnet build` y `dotnet test` **antes** de marcar `[x]` en `tasks.md`. Si el gate falla, `tasks.md` no se modifica.
 2. El commit sigue *Conventional Commits* y el cuerpo incluye `Task: T-x.y`, `Agent:` y el estado de build/tests.
-3. Tras el commit hace `git push -u origin HEAD:<rama-actual>`. Usa `-NoPush` para commits solo locales.
+3. Los scripts son los únicos autorizados a ejecutar `git add .`, `git commit -m` y `git push origin main`. Usa `-NoPush` para commits solo locales.
 4. Para commits de andamiaje previos a la primera tarea usar `commit-task.ps1 -TaskId T-0.0 -Type chore -Scope setup -All`.
 5. El commit lo crea el script, no el agente: nunca ejecutar `git add` + `git commit` sueltos si existe una tarea asociada.
+6. La rama de publicación es `main`; los scripts abortan si el HEAD está en una rama distinta.
 
 ---
 

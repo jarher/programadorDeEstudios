@@ -4,8 +4,8 @@ Creates a conventional commit for a task and pushes it to the GitHub remote.
 
 .DESCRIPTION
 Stages the selected paths (or all changes), optionally runs the build/test
-quality gate, creates a commit with the Task trailer and pushes the current
-branch to the remote.
+quality gate, creates a commit with the Task trailer and pushes main to the
+remote (git add . / git commit -m / git push origin main).
 
 .EXAMPLE
 .\commit-task.ps1 -TaskId T-1.3 -Type feat -Scope core -Message "models Topic and StudySession" -All -Build -Test
@@ -41,8 +41,6 @@ param(
     [switch]$NoPush,
 
     [string]$Remote = 'origin',
-
-    [string]$Branch = '',
 
     [switch]$DryRun
 )
@@ -101,9 +99,8 @@ try {
     }
     $currentBranch = $currentBranch.Trim()
 
-    $targetBranch = $currentBranch
-    if (-not [string]::IsNullOrWhiteSpace($Branch)) {
-        $targetBranch = $Branch.Trim()
+    if ($currentBranch -ne 'main') {
+        throw "commit-task.ps1 publishes to 'main'. Current branch is '$currentBranch'; checkout main first."
     }
 
     if (-not $All -and $Paths.Count -eq 0) {
@@ -137,7 +134,7 @@ try {
 
     if ($DryRun) {
         Write-Host '[dry-run] Repository : ' $repoRoot
-        Write-Host '[dry-run] Branch     : ' $targetBranch
+        Write-Host '[dry-run] Branch     : ' $currentBranch
         Write-Host '[dry-run] Subject    : ' $subject
         Write-Host '[dry-run] Body       :' ($bodyLines -join ' | ')
         Write-Host '[dry-run] Solution   : ' $(if ($null -eq $solution) { '(not found)' } else { $solution })
@@ -145,7 +142,7 @@ try {
         Write-Host '[dry-run] Tests      : ' $testPlanned
         Write-Host '[dry-run] Push       : ' (-not $NoPush)
         if ($All) {
-            Write-Host '[dry-run] Stage      : all changes (git add -A)'
+            Write-Host '[dry-run] Stage      : all changes (git add .)'
         }
         else {
             Write-Host '[dry-run] Stage      :' ($Paths -join ', ')
@@ -162,7 +159,7 @@ try {
     }
 
     if ($All) {
-        Invoke-Native -Exe 'git' -Arguments @('add', '-A')
+        Invoke-Native -Exe 'git' -Arguments @('add', '.')
     }
     else {
         foreach ($path in $Paths) {
@@ -183,7 +180,8 @@ try {
 
     Write-Host ('Staged files: {0}' -f $staged.Count)
 
-    Invoke-Native -Exe 'git' -Arguments @('commit', '-m', $subject, '-m', $commitBody)
+    $commitMessage = $subject + "`n`n" + $commitBody
+    Invoke-Native -Exe 'git' -Arguments @('commit', '-m', $commitMessage)
 
     $commitHash = (& git rev-parse --short HEAD).Trim()
     if ($LASTEXITCODE -ne 0) {
@@ -195,10 +193,10 @@ try {
         $hasUpstream = (-not [string]::IsNullOrWhiteSpace($upstream))
 
         if ($hasUpstream) {
-            Invoke-Native -Exe 'git' -Arguments @('push', $Remote, "HEAD:$targetBranch")
+            Invoke-Native -Exe 'git' -Arguments @('push', $Remote, 'main')
         }
         else {
-            Invoke-Native -Exe 'git' -Arguments @('push', '-u', $Remote, "HEAD:$targetBranch")
+            Invoke-Native -Exe 'git' -Arguments @('push', '-u', $Remote, 'main')
         }
     }
 
@@ -206,7 +204,7 @@ try {
     Write-Host '=== Commit created ==='
     Write-Host ('Task    : {0}' -f $TaskId)
     Write-Host ('Commit  : {0}' -f $commitHash)
-    Write-Host ('Branch  : {0}' -f $targetBranch)
+    Write-Host ('Branch  : {0}' -f $currentBranch)
     Write-Host ('Subject : {0}' -f $subject)
     Write-Host ('Pushed  : {0}' -f (-not $NoPush))
 }

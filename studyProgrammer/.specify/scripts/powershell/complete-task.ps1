@@ -35,8 +35,6 @@ param(
 
     [string]$Remote = 'origin',
 
-    [string]$Branch = '',
-
     [switch]$SkipBuild,
 
     [switch]$SkipTests,
@@ -96,7 +94,7 @@ $featureConfigPath = Join-Path $repoRoot 'studyProgrammer/.specify/feature.json'
 $featureDirectory = 'studyProgrammer/specs/001-study-tracker'
 
 if (Test-Path -LiteralPath $featureConfigPath) {
-    $featureConfig = Get-Content -LiteralPath $featureConfigPath -Raw | ConvertFrom-Json
+    $featureConfig = Get-Content -LiteralPath $featureConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
     if ($null -ne $featureConfig.feature_directory -and -not [string]::IsNullOrWhiteSpace($featureConfig.feature_directory)) {
         $featureDirectory = 'studyProgrammer/' + ($featureConfig.feature_directory -replace '\\', '/')
     }
@@ -107,7 +105,7 @@ if (-not (Test-Path -LiteralPath $tasksPath)) {
     throw "tasks.md not found: $tasksPath"
 }
 
-$content = Get-Content -LiteralPath $tasksPath -Raw
+$content = Get-Content -LiteralPath $tasksPath -Raw -Encoding UTF8
 $escapedId = [regex]::Escape($TaskId)
 
 $donePattern = '(?m)^[ \t]*-[ \t]*\[[xX]\][ \t]*\*\*' + $escapedId + '\*\*'
@@ -172,9 +170,6 @@ $commitArguments = @{
 
 if (-not [string]::IsNullOrWhiteSpace($Scope)) {
     $commitArguments['Scope'] = $Scope
-}
-if (-not [string]::IsNullOrWhiteSpace($Branch)) {
-    $commitArguments['Branch'] = $Branch
 }
 if ($Paths.Count -gt 0) {
     $commitArguments['Paths'] = $Paths
