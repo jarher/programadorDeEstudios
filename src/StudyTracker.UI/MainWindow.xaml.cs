@@ -1,23 +1,34 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using System.Windows.Automation;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
 namespace StudyTracker.UI;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : FluentWindow
 {
     public MainWindow()
     {
         InitializeComponent();
+        UpdateThemeButton(ApplicationThemeManager.GetAppTheme());
+    }
+
+    private void ThemeButton_Click(object sender, RoutedEventArgs e)
+    {
+        var currentTheme = ApplicationThemeManager.GetAppTheme();
+        var nextTheme = currentTheme == ApplicationTheme.Dark
+            ? ApplicationTheme.Light
+            : ApplicationTheme.Dark;
+
+        ApplicationThemeManager.Apply(nextTheme, WindowBackdropType.Mica, true);
+        UpdateThemeButton(nextTheme);
+    }
+
+    private void UpdateThemeButton(ApplicationTheme theme)
+    {
+        var isDark = theme == ApplicationTheme.Dark;
+        ThemeIcon.Symbol = isDark ? SymbolRegular.WeatherSunny24 : SymbolRegular.WeatherMoon24;
+        ThemeButton.ToolTip = isDark ? "Cambiar a tema claro" : "Cambiar a tema oscuro";
+        AutomationProperties.SetName(ThemeButton, ThemeButton.ToolTip.ToString());
     }
 }
