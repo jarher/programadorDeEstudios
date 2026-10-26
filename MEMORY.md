@@ -51,7 +51,7 @@
 | 2026-10-26 | Memoria | `59f2d4f` | 00-coordinator | — | Primera sincronización de MEMORY con el estado real |
 | 2026-10-26 | Memoria | `031fc8c` | 00-coordinator | — | Consolidación en un único MEMORY raíz y eliminación del duplicado |
 | 2026-10-26 | T-1.3 | `d6e6354` | 01-data-core | build 0/0; tests 1/1 | Modelos de dominio en Core y retiro de `Class1.cs` |
-| 2026-10-26 | T-1.4 | — | 01-data-core | build 0/0; smoke test OK | `DatabaseInitializer`, tablas, índices y FK con cascada |
+| 2026-10-26 | T-1.4 | `9ba6650` | 01-data-core | build 0/0; smoke test OK | `DatabaseInitializer`, tablas, índices y FK con cascada |
 
 ---
 
