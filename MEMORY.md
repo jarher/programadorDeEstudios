@@ -56,9 +56,9 @@
 | 2026-10-26 | T-1.5 | `2f7e452` | 01-data-core | build 0/0; tests 5/5 | `ITopicRepository`, `TopicRepository` y pruebas de CRUD/estado |
 | 2026-10-26 | T-1.6 | `eda825a` | 01-data-core | build 0/0; tests 9/9 | `ISessionRepository`, `SessionRepository` y actividad diaria |
 | 2026-10-26 | T-1.7 | `79e4900` | 04-qa-verification | build 0/0; tests 14/14 | Pruebas de FK, cascada y vacíos; retiro de `UnitTest1.cs` |
-| 2026-10-26 | T-2.1 | — | 02-timer-notifications | build 0/0; tests 14/14 | `ITimerService` y `TimerService` con `TimeProvider` |
-| 2026-10-26 | T-2.2 | — | 04-qa-verification | build 0/0; tests 24/24 | 10 pruebas deterministas con `FakeTimeProvider` |
-| 2026-10-26 | T-2.3 | — | 02-timer-notifications | build 0/0; tests 24/24 | Toasts con acciones interactivas y Core multi-target |
+| 2026-10-26 | T-2.1 | `a9f50e2` | 02-timer-notifications | build 0/0; tests 14/14 | `ITimerService` y `TimerService` con `TimeProvider` |
+| 2026-10-26 | T-2.2 | `0092d5e` | 04-qa-verification | build 0/0; tests 24/24 | 10 pruebas deterministas con `FakeTimeProvider` |
+| 2026-10-26 | T-2.3 | `1d59666` | 02-timer-notifications | build 0/0; tests 24/24 | Toasts con acciones interactivas y Core multi-target |
 
 ---
 
