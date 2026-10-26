@@ -9,7 +9,7 @@
 ## Fase 1: Configuración de la Solución y Capa de Datos SQLite (SDD)
 
 - [x] **T-1.1**: Inicializar la solución .NET 8 `StudyTracker.sln` con los proyectos `StudyTracker.Core`, `StudyTracker.UI` (WPF) y `StudyTracker.Core.Tests`.
-- [ ] **T-1.2**: Instalar paquetes NuGet esenciales: `Microsoft.Data.Sqlite`, `Dapper`, `CommunityToolkit.Mvvm`, `Wpf.Ui`.
+- [x] **T-1.2**: Instalar paquetes NuGet esenciales: `Microsoft.Data.Sqlite`, `Dapper`, `CommunityToolkit.Mvvm`, `Wpf.Ui`.
 - [ ] **T-1.3**: Implementar modelos de dominio en `StudyTracker.Core`: `Topic`, `StudySession`, `TopicSummaryDto`.
 - [ ] **T-1.4**: Implementar `DatabaseInitializer` para crear automáticamente las tablas `topics`, `study_sessions` e índices en SQLite.
 - [ ] **T-1.5**: Implementar repositorio `TopicRepository` (CRUD, cálculo de horas acumuladas, cambio de estado activo/completado).

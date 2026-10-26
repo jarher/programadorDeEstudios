@@ -35,13 +35,30 @@ _ReSharper*/
 *.resharper
 
 # ---------------------------------------------------------------------
-# Paquetes NuGet
+# Paquetes NuGet - Fase 1 (T-1.2)
+# Microsoft.Data.Sqlite | Dapper | CommunityToolkit.Mvvm | WPF-UI (namespace Wpf.Ui)
+# xUnit, Microsoft.NET.Test.Sdk, xunit.runner.visualstudio y
+# coverlet.collector ya vienen con el proyecto de pruebas (T-1.1).
+# Los paquetes se restauran en %USERPROFILE%\.nuget\packages, fuera del repo.
 # ---------------------------------------------------------------------
+[Pp]ackages/
 *.nupkg
 *.snupkg
 .nuget/
 global-packages/
 nuget-packages/
+
+# Metadatos generados por la restauracion (nunca versionar)
+project.assets.json
+project.nuget.cache
+*.nuget.g.props
+*.nuget.g.targets
+*.nuget.dgspec.json
+*.nuget.props
+*.nuget.targets
+
+# Nota: packages.lock.json y Directory.Packages.props SI se versionan
+# para garantizar restauraciones reproducibles.
 
 # ---------------------------------------------------------------------
 # Pruebas y cobertura
