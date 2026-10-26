@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-2.2 — Pruebas del temporizador (2026-10-26)  
-**Estado global**: Fase 2 en curso — 2/3 cerradas, próxima T-2.3
+**Último hito cerrado**: T-2.3 — Notificaciones Windows (2026-10-26)  
+**Estado global**: Fase 2 completada (3/3); próxima Fase 3 — T-3.1
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -15,7 +15,7 @@
 | Elemento | Estado |
 | :--- | :--- |
 | Solución `StudyTracker.sln` | Creada en la raíz con 3 proyectos |
-| `StudyTracker.Core` | net8.0; modelos, datos, interfaces y repositorios |
+| `StudyTracker.Core` | net8.0 + net8.0-windows10.0.19041.0; dominio, datos, temporizador y notificaciones |
 | `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; ventana por defecto |
 | `StudyTracker.Core.Tests` | net8.0, xUnit; 24 pruebas (14 datos + 10 temporizador) |
 | Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 24/24 |
@@ -23,7 +23,7 @@
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
 | Temporizador | `TimerService` + 10 pruebas deterministas (T-2.1/T-2.2) |
-| Notificaciones Windows | Pendiente (T-2.3) |
+| Notificaciones Windows | `WindowsNotificationService` con toasts y acciones interactivas (T-2.3) |
 | UI Fluent / analítica | Pendiente (Fases 3-5) |
 
 ---
@@ -33,12 +33,12 @@
 | Fase | Tareas | Avance | Estado |
 | :--- | :---: | :---: | :--- |
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
-| Fase 2 — Temporizador y Toasts | 3 | 2/3 | **En curso** |
+| Fase 2 — Temporizador y Toasts | 3 | 3/3 | **Completada** |
 | Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-2.3` — `WindowsNotificationService` con toasts y acciones interactivas.
+**Próxima tarea**: `T-3.1` — dashboard y CRUD de temáticas en la UI (Fase 3).
 
 ---
 
@@ -58,6 +58,7 @@
 | 2026-10-26 | T-1.7 | `79e4900` | 04-qa-verification | build 0/0; tests 14/14 | Pruebas de FK, cascada y vacíos; retiro de `UnitTest1.cs` |
 | 2026-10-26 | T-2.1 | — | 02-timer-notifications | build 0/0; tests 14/14 | `ITimerService` y `TimerService` con `TimeProvider` |
 | 2026-10-26 | T-2.2 | — | 04-qa-verification | build 0/0; tests 24/24 | 10 pruebas deterministas con `FakeTimeProvider` |
+| 2026-10-26 | T-2.3 | — | 02-timer-notifications | build 0/0; tests 24/24 | Toasts con acciones interactivas y Core multi-target |
 
 ---
 
@@ -76,6 +77,7 @@
 * **ADR-011 (Marcas de Tiempo)**: se persisten en hora local con formato ISO 8601 sin zona; si `CreatedAt` llega vacío, los repositorios lo completan con `DateTime.Now`. Las consultas por día usan `date(started_at)`.
 * **ADR-012 (Intensidad del Mapa de Calor)**: cuatro niveles según minutos diarios acumulados: 0 = 0; 1 = 1-29; 2 = 30-59; 3 = 60-119; 4 = 120 o más.
 * **ADR-013 (Semántica del Temporizador)**: `ElapsedTime` conserva el tiempo efectivo al pausar o detener; `Start` reinicia; el evento `Tick` entrega el tiempo restante cada 250 ms y se inyecta `TimeProvider` para pruebas deterministas.
+* **ADR-014 (Notificaciones y Multi-target)**: Core apunta a `net8.0` y `net8.0-windows10.0.19041.0`; `Microsoft.Toolkit.Uwp.Notifications` 7.1.3 solo se referencia en el TFM de Windows y `WindowsNotificationService` se excluye del TFM portable. Las acciones de los toasts se exponen mediante `ActionInvoked`.
 
 ---
 
@@ -85,9 +87,9 @@
 | :--- | :--- | :--- | :--- |
 | **`00-coordinator`** | Orquestación, ramas, gates | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
 | **`01-data-core`** | SQLite, Dapper, dominio | Fase 1 completada | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
-| **`02-timer-notifications`** | TimerService, WinRT Toasts | **ACTIVO (Fase 2)** | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
-| **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | En espera (Fases 3-5) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
-| **`04-qa-verification`** | xUnit, criterios Given-When-Then | Fase 1 completada | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
+| **`02-timer-notifications`** | TimerService, WinRT Toasts | Fase 2 completada | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
+| **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | Siguiente (Fase 3) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
+| **`04-qa-verification`** | xUnit, criterios Given-When-Then | Fase 2 completada | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
 
 ---
 
@@ -101,12 +103,13 @@ programadorDeEstudios/
 ├── MEMORY.md                           # Este archivo (memoria única)
 ├── PLAN_ESPECIFICACION.md
 ├── src/
-│   ├── StudyTracker.Core/              # net8.0
-│   │   ├── StudyTracker.Core.csproj    # Dapper 2.1.89 + Microsoft.Data.Sqlite 8.0.33
+│   ├── StudyTracker.Core/              # net8.0 + net8.0-windows10.0.19041.0
+│   │   ├── StudyTracker.Core.csproj    # Dapper + SQLite; Notifications 7.1.3 solo en windows
 │   │   ├── Data/                       # DatabaseInitializer, TopicRepository, SessionRepository
-│   │   ├── Interfaces/                 # ITopicRepository, ISessionRepository, ITimerService
+│   │   ├── Interfaces/                 # ITopicRepository, ISessionRepository, ITimerService, INotificationService
 │   │   ├── Models/                     # Topic, StudySession, TopicSummaryDto, DailyActivityDto
-│   │   └── Services/                   # TimerService
+│   │   ├── Notifications/              # NotificationAction, NotificationActionEventArgs
+│   │   └── Services/                   # TimerService, WindowsNotificationService
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
 │       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
 │       ├── App.xaml / App.xaml.cs
@@ -142,6 +145,7 @@ programadorDeEstudios/
 * **Conexión SQLite**: `DatabaseInitializer` crea el directorio, aplica DDL idempotente y usa `ForeignKeys=true` en el connection string.
 * **Pruebas con BD temporal**: llamar `SqliteConnection.ClearAllPools()` antes de borrar el archivo, por el pooling de conexiones.
 * **Pruebas del temporizador**: `FakeTimeProvider` (8.10.0) permite avanzar el reloj sin esperas reales; los tests cubren pausa, stop, reinicio y finalización única.
+* **Notificaciones**: `Microsoft.Toolkit.Uwp.Notifications` 7.1.3 funciona sin MSIX en Windows 10 1809+; el servicio solo se compila en el TFM de Windows y las acciones llegan por `ActionInvoked`.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -162,10 +166,10 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-2.3**: implementar `INotificationService` y `WindowsNotificationService` con toasts (inicio, fin y botones Descanso/Extender/Finalizar) y cerrar con:
+Ejecutar **T-3.1**: iniciar la Fase 3 (dashboard y CRUD de temáticas) y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-2.3 -Type feat -Scope core `
-  -Message "windows toast notifications" -Agent 02-timer-notifications
+  -TaskId T-3.1 -Type feat -Scope ui `
+  -Message "dashboard and topic management" -Agent 03-ui-presentation
 ```
