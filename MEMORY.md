@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-3.1 — Ventana Fluent y tema adaptable (2026-10-26)  
-**Estado global**: Fase 2 completada (3/3); Fase 3 en curso (1/4); próxima T-3.2
+**Último hito cerrado**: T-3.2 — `DashboardViewModel` y resumen general (2026-10-26)  
+**Estado global**: Fase 2 completada (3/3); Fase 3 en curso (2/4); próxima T-3.3
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -26,7 +26,8 @@
 | Notificaciones Windows | `WindowsNotificationService` con toasts y acciones interactivas (T-2.3) |
 | Equipo de agentes | `coordinator` + 4 subagentes opencode locales (no versionados) |
 | Ventana Fluent | `FluentWindow` con Mica, title bar y toggle claro/oscuro (T-3.1) |
-| Dashboard / analítica | Pendiente (T-3.2 a Fase 5) |
+| ViewModel del dashboard | `DashboardViewModel` + `TopicItemViewModel`: listado, toggle de completado y resumen (T-3.2) |
+| Dashboard / analítica | Pendiente (T-3.3 a Fase 5) |
 
 ---
 
@@ -36,11 +37,11 @@
 | :--- | :---: | :---: | :--- |
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
 | Fase 2 — Temporizador y Toasts | 3 | 3/3 | **Completada** |
-| Fase 3 — Dashboard y temáticas | 4 | 1/4 | En curso |
+| Fase 3 — Dashboard y temáticas | 4 | 2/4 | En curso |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-3.2` — `DashboardViewModel` con listado de temáticas, alternancia de estado y resumen general (Fase 3).
+**Próxima tarea**: `T-3.3` — `DashboardView` con tarjetas de temáticas, progreso hacia la meta y checkbox de marcaje (Fase 3).
 
 ---
 
@@ -63,6 +64,7 @@
 | 2026-10-26 | T-2.3 | `1d59666` | 02-timer-notifications | build 0/0; tests 24/24 | Toasts con acciones interactivas y Core multi-target |
 | 2026-10-26 | T-0.0 | `0af9b1c` | 00-coordinator | build 0/0; tests 24/24 | Agentes opencode locales y `.opencode/` ignorado |
 | 2026-10-26 | T-3.1 | `ddfe8c8` | 03-ui-presentation | build 0/0; tests 24/24 | Ventana Fluent con Mica, title bar y tema claro/oscuro |
+| 2026-10-26 | T-3.2 | `—` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
 
 ---
 
@@ -124,7 +126,8 @@ programadorDeEstudios/
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
 │       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
 │       ├── App.xaml / App.xaml.cs      # recursos Wpf.Ui y tema inicial del sistema
-│       └── MainWindow.xaml / .xaml.cs  # shell Fluent: Mica, title bar y toggle de tema
+│       ├── MainWindow.xaml / .xaml.cs  # shell Fluent: Mica, title bar y toggle de tema
+│       └── ViewModels/                 # DashboardViewModel, TopicItemViewModel
 ├── tests/
 │   └── StudyTracker.Core.Tests/        # net8.0
 │       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0, TimeProvider.Testing 8.10.0
@@ -160,6 +163,9 @@ programadorDeEstudios/
 * **Agentes opencode**: `.opencode/` está ignorado por Git; los agentes son locales. Se recrean desde `AGENTS.md` §3.2 y las fichas canónicas. El coordinador no edita código y los subagentes no hacen commits.
 * **Cierre con scripts**: invocar `complete-task.ps1`/`commit-task.ps1` directamente con `&`, nunca a través de `rtk` (falla con `.ps1`). Solo el coordinador cierra tareas.
 * **Tema WPF-UI**: en 4.3.0 `ApplicationThemeManager.GetSystemTheme()` devuelve `SystemTheme`, no `ApplicationTheme`; mapear `Light`, `Sunrise` y `Flow` a claro y el resto a oscuro. El tema se aplica en `App.OnStartup` antes de crear la ventana.
+* **ViewModels del dashboard**: `DashboardViewModel` depende solo de `ITopicRepository`; la persistencia ocurre exclusivamente en `ToggleCompletedAsync` y la agregación vive en `UpdateSummary()`. `ProgressPercentage` y `OverallProgressPercentage` se topan a 100 con `Math.Clamp`.
+* **Cobertura de ViewModels**: no existe proyecto de pruebas para `StudyTracker.UI` (`net8.0-windows10.0.19041.0`); T-3.2 se validó por inspección y gates. Ruta futura: extraer la lógica pura a una librería `net8.0` o crear `tests/StudyTracker.UI.Tests`.
+* **`CompletedAt` tras el toggle**: el ViewModel muestra `DateTime.Now` local y la BD persiste su propio instante; tras recargar prevalece el valor de SQLite.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -180,10 +186,11 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-3.2**: implementar `DashboardViewModel` (listado de temáticas, alternancia a completada y resumen general) y cerrar con:
+Ejecutar **T-3.3**: crear `Views/DashboardView.xaml` con tarjetas de temáticas, barra de progreso hacia la meta y checkbox de marcaje, y cablearlo al `DashboardViewModel` (composición de `DatabaseInitializer` + `TopicRepository` en `App.xaml.cs`). Cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-3.2 -Type feat -Scope ui `
-  -Message "dashboard view model and topic summary" -Agent 03-ui-presentation
+  -TaskId T-3.3 -Type feat -Scope ui `
+  -Message "dashboard view with topic cards and progress" -Agent 03-ui-presentation `
+  -Paths src/StudyTracker.UI, studyProgrammer/specs/001-study-tracker/tasks.md, MEMORY.md
 ```
