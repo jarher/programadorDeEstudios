@@ -64,7 +64,7 @@
 | 2026-10-26 | T-2.3 | `1d59666` | 02-timer-notifications | build 0/0; tests 24/24 | Toasts con acciones interactivas y Core multi-target |
 | 2026-10-26 | T-0.0 | `0af9b1c` | 00-coordinator | build 0/0; tests 24/24 | Agentes opencode locales y `.opencode/` ignorado |
 | 2026-10-26 | T-3.1 | `ddfe8c8` | 03-ui-presentation | build 0/0; tests 24/24 | Ventana Fluent con Mica, title bar y tema claro/oscuro |
-| 2026-10-26 | T-3.2 | `—` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
+| 2026-10-26 | T-3.2 | `486f412` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
 
 ---
 
