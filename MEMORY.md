@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-1.7 — Fase 1 completada (2026-10-26)  
-**Estado global**: Fase 1 completada (7/7); próxima Fase 2 — T-2.1
+**Último hito cerrado**: T-2.1 — TimerService (2026-10-26)  
+**Estado global**: Fase 2 en curso — 1/3 cerradas, próxima T-2.2
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -22,7 +22,8 @@
 | Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
-| Temporizador / notificaciones | Pendiente (Fase 2) |
+| Temporizador | `TimerService` con `TimeProvider` y tick de 250 ms (T-2.1) |
+| Notificaciones Windows | Pendiente (T-2.3) |
 | UI Fluent / analítica | Pendiente (Fases 3-5) |
 
 ---
@@ -32,12 +33,12 @@
 | Fase | Tareas | Avance | Estado |
 | :--- | :---: | :---: | :--- |
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
-| Fase 2 — Temporizador y Toasts | 3 | 0/3 | Pendiente |
+| Fase 2 — Temporizador y Toasts | 3 | 1/3 | **En curso** |
 | Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-2.1` — `ITimerService`/`TimerService` con cuenta regresiva, pausas y eventos `Tick`/`Completed`.
+**Próxima tarea**: `T-2.2` — pruebas deterministas de `TimerService` (pausa, stop y finalización exacta).
 
 ---
 
@@ -55,6 +56,7 @@
 | 2026-10-26 | T-1.5 | `2f7e452` | 01-data-core | build 0/0; tests 5/5 | `ITopicRepository`, `TopicRepository` y pruebas de CRUD/estado |
 | 2026-10-26 | T-1.6 | `eda825a` | 01-data-core | build 0/0; tests 9/9 | `ISessionRepository`, `SessionRepository` y actividad diaria |
 | 2026-10-26 | T-1.7 | `79e4900` | 04-qa-verification | build 0/0; tests 14/14 | Pruebas de FK, cascada y vacíos; retiro de `UnitTest1.cs` |
+| 2026-10-26 | T-2.1 | — | 02-timer-notifications | build 0/0; tests 14/14 | `ITimerService` y `TimerService` con `TimeProvider` |
 
 ---
 
@@ -72,6 +74,7 @@
 * **ADR-010 (Memoria Única)**: `MEMORY.md` en la raíz es el único libro de desarrollo; `tasks.md` es la fuente de verdad del estado de tareas y `MEMORY.md` resume progreso, bitácora y decisiones.
 * **ADR-011 (Marcas de Tiempo)**: se persisten en hora local con formato ISO 8601 sin zona; si `CreatedAt` llega vacío, los repositorios lo completan con `DateTime.Now`. Las consultas por día usan `date(started_at)`.
 * **ADR-012 (Intensidad del Mapa de Calor)**: cuatro niveles según minutos diarios acumulados: 0 = 0; 1 = 1-29; 2 = 30-59; 3 = 60-119; 4 = 120 o más.
+* **ADR-013 (Semántica del Temporizador)**: `ElapsedTime` conserva el tiempo efectivo al pausar o detener; `Start` reinicia; el evento `Tick` entrega el tiempo restante cada 250 ms y se inyecta `TimeProvider` para pruebas deterministas.
 
 ---
 
@@ -81,7 +84,7 @@
 | :--- | :--- | :--- | :--- |
 | **`00-coordinator`** | Orquestación, ramas, gates | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
 | **`01-data-core`** | SQLite, Dapper, dominio | Fase 1 completada | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
-| **`02-timer-notifications`** | TimerService, WinRT Toasts | Siguiente (Fase 2) | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
+| **`02-timer-notifications`** | TimerService, WinRT Toasts | **ACTIVO (Fase 2)** | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
 | **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | En espera (Fases 3-5) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
 | **`04-qa-verification`** | xUnit, criterios Given-When-Then | Fase 1 completada | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
 
@@ -100,8 +103,9 @@ programadorDeEstudios/
 │   ├── StudyTracker.Core/              # net8.0
 │   │   ├── StudyTracker.Core.csproj    # Dapper 2.1.89 + Microsoft.Data.Sqlite 8.0.33
 │   │   ├── Data/                       # DatabaseInitializer, TopicRepository, SessionRepository
-│   │   ├── Interfaces/                 # ITopicRepository, ISessionRepository
-│   │   └── Models/                     # Topic, StudySession, TopicSummaryDto, DailyActivityDto
+│   │   ├── Interfaces/                 # ITopicRepository, ISessionRepository, ITimerService
+│   │   ├── Models/                     # Topic, StudySession, TopicSummaryDto, DailyActivityDto
+│   │   └── Services/                   # TimerService
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
 │       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
 │       ├── App.xaml / App.xaml.cs
@@ -155,10 +159,10 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-2.1**: implementar `ITimerService`/`TimerService` en Core (cuenta regresiva, pausa, reanudación y eventos `Tick`/`Completed`) y cerrar con:
+Ejecutar **T-2.2**: escribir pruebas deterministas de `TimerService` con `FakeTimeProvider` (pausa, stop y finalización) y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-2.1 -Type feat -Scope core `
-  -Message "countdown timer service" -Agent 02-timer-notifications
+  -TaskId T-2.2 -Type test -Scope core `
+  -Message "deterministic timer tests" -Agent 04-qa-verification
 ```
