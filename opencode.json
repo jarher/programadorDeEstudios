@@ -1,0 +1,33 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "git": {
+      "type": "local",
+      "command": ["npx", "-y", "@cyanheads/git-mcp-server@latest"],
+      "enabled": true,
+      "environment": {
+        "GIT_BASE_DIR": "C:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios",
+        "GIT_AUTHOR_NAME": "Jarher",
+        "GIT_AUTHOR_EMAIL": "jefferh33@gmail.com",
+        "GIT_SIGN_COMMITS": "false",
+        "MCP_RESPONSE_FORMAT": "json",
+        "MCP_LOG_LEVEL": "warn"
+      }
+    },
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  },
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "git *": "allow",
+      "dotnet *": "allow"
+    }
+  }
+}
