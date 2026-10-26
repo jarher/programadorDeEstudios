@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-1.2 — commit `541e055` (2026-10-26)  
-**Estado global**: Fase 1 en curso — T-1.1 y T-1.2 cerradas, próxima T-1.3
+**Último hito cerrado**: T-1.3 — modelos de dominio (2026-10-26)  
+**Estado global**: Fase 1 en curso — 3/7 cerradas, próxima T-1.4
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -19,7 +19,7 @@
 | `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; ventana por defecto |
 | `StudyTracker.Core.Tests` | net8.0, xUnit; 1 prueba placeholder |
 | Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 1/1 |
-| Modelos de dominio | Pendiente (T-1.3) |
+| Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | SQLite / repositorios | Pendiente (T-1.4 a T-1.6) |
 | Temporizador / notificaciones | Pendiente (Fase 2) |
 | UI Fluent / analítica | Pendiente (Fases 3-5) |
@@ -30,13 +30,13 @@
 
 | Fase | Tareas | Avance | Estado |
 | :--- | :---: | :---: | :--- |
-| Fase 1 — Solución y datos SQLite | 7 | 2/7 | **En curso** |
+| Fase 1 — Solución y datos SQLite | 7 | 3/7 | **En curso** |
 | Fase 2 — Temporizador y Toasts | 3 | 0/3 | Pendiente |
 | Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-1.3` — modelos `Topic`, `StudySession`, `TopicSummaryDto`, `DailyActivityDto`.
+**Próxima tarea**: `T-1.4` — `DatabaseInitializer` con tablas `topics`, `study_sessions`, índices y `PRAGMA foreign_keys = ON`.
 
 ---
 
@@ -49,6 +49,7 @@
 | 2026-10-26 | T-1.2 | `541e055` | 01-data-core | build 0/0; tests 1/1 | NuGet Core/UI, TFM de UI y corrección WPF-UI |
 | 2026-10-26 | Memoria | `59f2d4f` | 00-coordinator | — | Primera sincronización de MEMORY con el estado real |
 | 2026-10-26 | Memoria | `031fc8c` | 00-coordinator | — | Consolidación en un único MEMORY raíz y eliminación del duplicado |
+| 2026-10-26 | T-1.3 | — | 01-data-core | build 0/0; tests 1/1 | Modelos de dominio en Core y retiro de `Class1.cs` |
 
 ---
 
@@ -91,7 +92,7 @@ programadorDeEstudios/
 ├── src/
 │   ├── StudyTracker.Core/              # net8.0
 │   │   ├── StudyTracker.Core.csproj    # Dapper 2.1.89 + Microsoft.Data.Sqlite 8.0.33
-│   │   └── Class1.cs                   # placeholder (se retira en T-1.3)
+│   │   └── Models/                     # Topic, StudySession, TopicSummaryDto, DailyActivityDto
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
 │       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
 │       ├── App.xaml / App.xaml.cs
@@ -120,7 +121,7 @@ programadorDeEstudios/
 
 ## 7. Notas, Deuda Técnica y Pendientes
 
-* **Placeholders**: `Class1.cs` y `UnitTest1.cs` se sustituyen en T-1.3 y T-1.7 respectivamente.
+* **Placeholders**: queda `UnitTest1.cs` (se sustituye en T-1.7); `Class1.cs` fue retirado en T-1.3.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -141,10 +142,10 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-1.3**: crear `Topic`, `StudySession`, `TopicSummaryDto` y `DailyActivityDto` en `src/StudyTracker.Core/Models/` según `data-model.md`, y cerrar con:
+Ejecutar **T-1.4**: implementar `DatabaseInitializer` para crear `topics`, `study_sessions`, sus índices y habilitar `PRAGMA foreign_keys = ON`, y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-1.3 -Type feat -Scope core `
-  -Message "domain models" -Agent 01-data-core
+  -TaskId T-1.4 -Type feat -Scope core `
+  -Message "sqlite schema initializer" -Agent 01-data-core
 ```
