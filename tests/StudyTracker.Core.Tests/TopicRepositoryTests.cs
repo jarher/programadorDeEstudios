@@ -99,6 +99,55 @@ public class TopicRepositoryTests
     }
 
     [Fact]
+    public async Task CreateAsync_WithoutOptionalFields_RoundTripsDefaults()
+    {
+        await using var database = await TestDatabase.CreateAsync();
+
+        var id = await database.Topics.CreateAsync(new Topic { Title = "Sin extras" });
+
+        var saved = await database.Topics.GetByIdAsync(id);
+
+        Assert.NotNull(saved);
+        Assert.Null(saved.Description);
+        Assert.Equal("#0078D4", saved.ColorHex);
+        Assert.Equal(0, saved.TargetHours);
+        Assert.Equal(Topic.StatusActive, saved.Status);
+        Assert.Null(saved.CompletedAt);
+        Assert.NotEqual(default, saved.CreatedAt);
+    }
+
+    [Fact]
+    public async Task GetSummariesAsync_WithZeroTarget_ReportsZeroProgress()
+    {
+        await using var database = await TestDatabase.CreateAsync();
+        var topicId = await database.Topics.CreateAsync(new Topic { Title = "Sin meta", TargetHours = 0 });
+
+        await database.Sessions.RecordSessionAsync(new StudySession
+        {
+            TopicId = topicId,
+            StartedAt = new DateTime(2026, 10, 26, 9, 0, 0),
+            EndedAt = new DateTime(2026, 10, 26, 9, 30, 0),
+            PlannedMinutes = 30,
+            ActualMinutes = 30
+        });
+
+        var summary = Assert.Single(await database.Topics.GetSummariesAsync());
+
+        Assert.Equal(30, summary.TotalMinutesStudied);
+        Assert.Equal(0, summary.ProgressPercentage);
+    }
+
+    [Fact]
+    public async Task EmptyDatabase_ReturnsEmptyTopicResults()
+    {
+        await using var database = await TestDatabase.CreateAsync();
+
+        Assert.Empty(await database.Topics.GetAllAsync());
+        Assert.Empty(await database.Topics.GetSummariesAsync());
+        Assert.Null(await database.Topics.GetByIdAsync(1));
+    }
+
+    [Fact]
     public async Task GetSummariesAsync_AggregatesMinutesProgressAndLastSession()
     {
         await using var database = await TestDatabase.CreateAsync();

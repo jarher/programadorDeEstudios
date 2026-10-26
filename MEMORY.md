@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-1.6 — SessionRepository (2026-10-26)  
-**Estado global**: Fase 1 en curso — 6/7 cerradas, próxima T-1.7
+**Último hito cerrado**: T-1.7 — Fase 1 completada (2026-10-26)  
+**Estado global**: Fase 1 completada (7/7); próxima Fase 2 — T-2.1
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -15,10 +15,10 @@
 | Elemento | Estado |
 | :--- | :--- |
 | Solución `StudyTracker.sln` | Creada en la raíz con 3 proyectos |
-| `StudyTracker.Core` | net8.0, compila; solo placeholder `Class1.cs` |
+| `StudyTracker.Core` | net8.0; modelos, datos, interfaces y repositorios |
 | `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; ventana por defecto |
-| `StudyTracker.Core.Tests` | net8.0, xUnit; 1 prueba placeholder |
-| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 1/1 |
+| `StudyTracker.Core.Tests` | net8.0, xUnit; 14 pruebas de integración |
+| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 14/14 |
 | Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
@@ -31,13 +31,13 @@
 
 | Fase | Tareas | Avance | Estado |
 | :--- | :---: | :---: | :--- |
-| Fase 1 — Solución y datos SQLite | 7 | 6/7 | **En curso** |
+| Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
 | Fase 2 — Temporizador y Toasts | 3 | 0/3 | Pendiente |
 | Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-1.7` — pruebas de integración de Fase 1 (FK, cascada, vacíos) y retiro de `UnitTest1.cs`.
+**Próxima tarea**: `T-2.1` — `ITimerService`/`TimerService` con cuenta regresiva, pausas y eventos `Tick`/`Completed`.
 
 ---
 
@@ -53,7 +53,8 @@
 | 2026-10-26 | T-1.3 | `d6e6354` | 01-data-core | build 0/0; tests 1/1 | Modelos de dominio en Core y retiro de `Class1.cs` |
 | 2026-10-26 | T-1.4 | `9ba6650` | 01-data-core | build 0/0; smoke test OK | `DatabaseInitializer`, tablas, índices y FK con cascada |
 | 2026-10-26 | T-1.5 | `2f7e452` | 01-data-core | build 0/0; tests 5/5 | `ITopicRepository`, `TopicRepository` y pruebas de CRUD/estado |
-| 2026-10-26 | T-1.6 | — | 01-data-core | build 0/0; tests 9/9 | `ISessionRepository`, `SessionRepository` y actividad diaria |
+| 2026-10-26 | T-1.6 | `eda825a` | 01-data-core | build 0/0; tests 9/9 | `ISessionRepository`, `SessionRepository` y actividad diaria |
+| 2026-10-26 | T-1.7 | — | 04-qa-verification | build 0/0; tests 14/14 | Pruebas de FK, cascada y vacíos; retiro de `UnitTest1.cs` |
 
 ---
 
@@ -79,10 +80,10 @@
 | ID | Rol | Estado | Ficha |
 | :--- | :--- | :--- | :--- |
 | **`00-coordinator`** | Orquestación, ramas, gates | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
-| **`01-data-core`** | SQLite, Dapper, dominio | **ACTIVO (Fase 1)** | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
-| **`02-timer-notifications`** | TimerService, WinRT Toasts | En espera (Fase 2) | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
+| **`01-data-core`** | SQLite, Dapper, dominio | Fase 1 completada | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
+| **`02-timer-notifications`** | TimerService, WinRT Toasts | Siguiente (Fase 2) | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
 | **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | En espera (Fases 3-5) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
-| **`04-qa-verification`** | xUnit, criterios Given-When-Then | En espera (T-1.7) | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
+| **`04-qa-verification`** | xUnit, criterios Given-When-Then | Fase 1 completada | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
 
 ---
 
@@ -110,8 +111,7 @@ programadorDeEstudios/
 │       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0
 │       ├── TestDatabase.cs             # BD temporal aislada por prueba
 │       ├── TopicRepositoryTests.cs     # CRUD, estado y resúmenes
-│       ├── SessionRepositoryTests.cs   # sesiones y actividad diaria
-│       └── UnitTest1.cs                # placeholder (se retira en T-1.7)
+│       └── SessionRepositoryTests.cs   # sesiones y actividad diaria
 └── studyProgrammer/
     ├── AGENTS.md                       # Gobernanza multi-agente
     ├── .specify/
@@ -132,7 +132,7 @@ programadorDeEstudios/
 
 ## 7. Notas, Deuda Técnica y Pendientes
 
-* **Placeholders**: queda `UnitTest1.cs` (se sustituye en T-1.7); `Class1.cs` fue retirado en T-1.3.
+* **Placeholders**: ninguno; `Class1.cs` se retiró en T-1.3 y `UnitTest1.cs` en T-1.7.
 * **Conexión SQLite**: `DatabaseInitializer` crea el directorio, aplica DDL idempotente y usa `ForeignKeys=true` en el connection string.
 * **Pruebas con BD temporal**: llamar `SqliteConnection.ClearAllPools()` antes de borrar el archivo, por el pooling de conexiones.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
@@ -155,10 +155,10 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-1.7**: ampliar las pruebas de Fase 1 (FK inválida, borrado en cascada, resultados vacíos), retirar `UnitTest1.cs` y cerrar con:
+Ejecutar **T-2.1**: implementar `ITimerService`/`TimerService` en Core (cuenta regresiva, pausa, reanudación y eventos `Tick`/`Completed`) y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-1.7 -Type test -Scope core `
-  -Message "phase 1 repository integration tests" -Agent 04-qa-verification
+  -TaskId T-2.1 -Type feat -Scope core `
+  -Message "countdown timer service" -Agent 02-timer-notifications
 ```
