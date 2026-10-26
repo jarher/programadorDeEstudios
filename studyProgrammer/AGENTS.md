@@ -100,6 +100,7 @@ Reglas:
 4. Para commits de andamiaje previos a la primera tarea usar `commit-task.ps1 -TaskId T-0.0 -Type chore -Scope setup -All`.
 5. El commit lo crea el script, no el agente: nunca ejecutar `git add` + `git commit` sueltos si existe una tarea asociada.
 6. La rama de publicación es `main`; los scripts abortan si el HEAD está en una rama distinta.
+7. `MEMORY.md` (raíz del repositorio) es el **libro único de desarrollo**: se lee al iniciar la sesión y se actualiza al cerrar cada tarea (progreso por fase, bitácora, próxima acción y ADR). No crear memorias por submódulo.
 
 ---
 

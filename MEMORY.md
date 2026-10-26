@@ -1,100 +1,147 @@
-# MEMORY.md — Memoria Operativa e Índice del Sistema Multi-Agente
+# MEMORY.md — Memoria General del Proyecto
 **Proyecto**: StudyProgrammer (Programador y Monitor de Estudios)  
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
-**Rama Activa**: `main` (remoto: `https://github.com/jarher/programadorDeEstudios.git`)  
-**Último commit**: `541e055` — `chore(deps): T-1.2`
+**Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
+**Último commit publicado**: `59f2d4f` — `docs(memory): T-1.2 sync MEMORY`  
+**Estado global**: Fase 1 en curso — T-1.1 y T-1.2 cerradas, próxima T-1.3
+
+> Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
 ---
 
-## 1. Índice de Agentes y Estado de Asignación
+## 1. Estado Actual del Desarrollo
 
-| ID del Agente | Rol Operativo | Especialidad / Límites | Estado Actual | Ficha de Especificación |
-| :--- | :--- | :--- | :---: | :--- |
-| **`00-coordinator`** | Lead Orchestrator | Despacho de tareas, control de ramas, aprobación de calidad | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
-| **`01-data-core`** | SQLite & Dominio | DDL SQLite, Dapper, modelos C#, repositorios asíncronos | **ACTIVO (Fase 1: T-1.1 y T-1.2 cerradas)** | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
-| **`02-timer-notifications`** | Servicios & WinRT | `TimerService`, Stopwatch, Toasts interactivos de Windows 11 | *En espera (Fase 2)* | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
-| **`03-ui-presentation`** | Fluent UI & MVVM | WPF, `WPF-UI` (Mica/Acrílico), ViewModels, `LiveCharts2` | *En espera (Fases 3-5)* | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
-| **`04-qa-verification`** | QA & Compliance | xUnit, validación de criterios *Given-When-Then*, límites de RAM | *En espera (gate de T-1.7)* | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
-
----
-
-## 2. Decisiones Arquitectónicas Registradas (ADR Log)
-
-* **ADR-001 (Ecosistema y Lenguaje)**: Se seleccionó **C# con .NET 8 (LTS)** frente a Python o Node/Electron para obtener máximo rendimiento (< 50 MB RAM), arranque en < 1s y soporte nativo del Action Center de Windows 11.
-* **ADR-002 (Capa de Presentación)**: Se seleccionó **WPF con WPF-UI** por ofrecer diseño nativo Fluent Design (Mica, Acrílico, iconos Segoe Fluent) con estabilidad probada en .NET 8 sin los problemas de empaquetado MSIX de WinUI 3. El ID correcto en NuGet es **`WPF-UI`** (el paquete `Wpf.Ui` es legacy y solo trae `net451`); el namespace C# sigue siendo `Wpf.Ui`.
-* **ADR-003 (Persistencia Local)**: Uso de **SQLite con `Microsoft.Data.Sqlite` y Dapper** con activación forzosa de claves foráneas (`PRAGMA foreign_keys = ON;`). 100% offline y local-first.
-* **ADR-004 (Analítica de Progreso)**: Enfoque visual híbrido: **Mapa de Calor estilo GitHub** para consistencia diaria (racha de hábitos) + **Gráficos de dona/barras** para metas de temáticas.
-* **ADR-005 (Metodología Híbrida)**: **SDD (Spec-Driven)** para blindar Core, esquema y temporizador; **ODD (Organic-Driven)** para iterar la ergonomía de la interfaz de usuario.
-* **ADR-006 (Integración de Agentes)**: Implementación de **GitHub Spec-Kit** configurado para **Gemini/Antigravity** con scripts en PowerShell (`ps`).
-* **ADR-007 (Target Framework)**: `StudyTracker.Core` y `StudyTracker.Core.Tests` usan `net8.0`; `StudyTracker.UI` usa `net8.0-windows10.0.19041.0` con `SupportedOSPlatformVersion=10.0.19041.0`. Requerido por WPF-UI 4.x y por las APIs WinRT de notificaciones de la Fase 2.
-* **ADR-008 (Ubicación de la Base de Datos)**: `study_tracker.db` reside en `%LOCALAPPDATA%\StudyTracker\`, fuera de OneDrive, para evitar corrupción por sincronización. Nunca se versiona (`*.db*` en `.gitignore`).
-* **ADR-009 (Automatización Git)**: Un commit por tarea mediante `studyProgrammer/.specify/scripts/powershell/complete-task.ps1` (gate `dotnet build` + `dotnet test` → marcar `[x]` en `tasks.md` → `git add .` → `git commit -m` → `git push origin main`). MCP `git`/`github` configurado en `opencode.json`.
+| Elemento | Estado |
+| :--- | :--- |
+| Solución `StudyTracker.sln` | Creada en la raíz con 3 proyectos |
+| `StudyTracker.Core` | net8.0, compila; solo placeholder `Class1.cs` |
+| `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; ventana por defecto |
+| `StudyTracker.Core.Tests` | net8.0, xUnit; 1 prueba placeholder |
+| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 1/1 |
+| Modelos de dominio | Pendiente (T-1.3) |
+| SQLite / repositorios | Pendiente (T-1.4 a T-1.6) |
+| Temporizador / notificaciones | Pendiente (Fase 2) |
+| UI Fluent / analítica | Pendiente (Fases 3-5) |
 
 ---
 
-## 3. Estado de Ejecución de Tareas (`tasks.md`)
+## 2. Progreso por Fase
 
-> `studyProgrammer/specs/001-study-tracker/tasks.md` es la fuente de verdad; esta sección es un espejo.
+| Fase | Tareas | Avance | Estado |
+| :--- | :---: | :---: | :--- |
+| Fase 1 — Solución y datos SQLite | 7 | 2/7 | **En curso** |
+| Fase 2 — Temporizador y Toasts | 3 | 0/3 | Pendiente |
+| Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
+| Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
+| Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-```
-[ ] FASE 1: Solución .NET 8 y Capa de Datos SQLite (Asignada a: 01-data-core)
-    [x] T-1.1: Solución StudyTracker.sln + Core, UI (WPF) y Tests            → commit f205ba7
-    [x] T-1.2: NuGet Core/UI (Sqlite 8.0.33, Dapper 2.1.89,
-              CommunityToolkit.Mvvm 8.4.2, WPF-UI 4.3.0)                    → commit 541e055
-    [ ] T-1.3: Crear modelos Topic, StudySession, TopicSummaryDto, DailyActivityDto
-    [ ] T-1.4: Implementar DatabaseInitializer con DDL de SQLite
-    [ ] T-1.5: Implementar TopicRepository
-    [ ] T-1.6: Implementar SessionRepository
-    [ ] T-1.7: Pruebas unitarias de persistencia xUnit (Asignada a: 04-qa-verification)
-
-[ ] FASE 2: Temporizador & Notificaciones Windows (Asignada a: 02-timer-notifications)
-[ ] FASE 3: Dashboard & Temáticas UI (Asignada a: 03-ui-presentation)
-[ ] FASE 4: Temporizador Bajo Demanda & Widget Flotante (Asignada a: 03-ui-presentation)
-[ ] FASE 5: Mapa de Calor & Analítica LiveCharts2 (Asignada a: 03-ui-presentation)
-```
+**Próxima tarea**: `T-1.3` — modelos `Topic`, `StudySession`, `TopicSummaryDto`, `DailyActivityDto`.
 
 ---
 
-## 4. Mapa Rápido de Archivos del Proyecto
+## 3. Bitácora de Desarrollo
+
+| Fecha | Tarea | Commit | Agente | Gate | Resultado |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-10-26 | T-0.0 | `2f41f0c` | 00-coordinator | — | Baseline documental, `.gitignore`, `opencode.json` y scripts de commit |
+| 2026-10-26 | T-1.1 | `f205ba7` | 01-data-core | build 0/0; tests 1/1 | Solución, proyectos Core/UI/Tests y referencias |
+| 2026-10-26 | T-1.2 | `541e055` | 01-data-core | build 0/0; tests 1/1 | NuGet Core/UI, TFM de UI y corrección WPF-UI |
+| 2026-10-26 | Memoria | `59f2d4f` | 00-coordinator | — | Primera sincronización de MEMORY con el estado real |
+| 2026-10-26 | Memoria | — | 00-coordinator | — | Consolidación en un único MEMORY raíz y eliminación del duplicado |
+
+---
+
+## 4. Decisiones Arquitectónicas (ADR Log)
+
+* **ADR-001 (Ecosistema y Lenguaje)**: **C# con .NET 8 (LTS)** frente a Python o Node/Electron por rendimiento (< 50 MB RAM), arranque < 1 s y soporte nativo del Action Center.
+* **ADR-002 (Capa de Presentación)**: **WPF con WPF-UI** para Fluent Design (Mica, Acrílico, Segoe Fluent) sin el empaquetado MSIX de WinUI 3. El ID correcto en NuGet es **`WPF-UI`** (el paquete `Wpf.Ui` es legacy y solo trae `net451`); el namespace C# sigue siendo `Wpf.Ui`.
+* **ADR-003 (Persistencia Local)**: **SQLite con `Microsoft.Data.Sqlite` + Dapper**, con `PRAGMA foreign_keys = ON;`. 100% offline y local-first.
+* **ADR-004 (Analítica de Progreso)**: **Mapa de calor estilo GitHub** para consistencia diaria + **dona/barras** para distribución y metas.
+* **ADR-005 (Metodología Híbrida)**: **SDD** para Core, esquema y temporizador; **ODD** para la ergonomía de la UI.
+* **ADR-006 (Integración de Agentes)**: **GitHub Spec-Kit** configurado para **Gemini/Antigravity** con scripts PowerShell.
+* **ADR-007 (Target Framework)**: `Core` y `Tests` en `net8.0`; `UI` en `net8.0-windows10.0.19041.0` con `SupportedOSPlatformVersion=10.0.19041.0`. Requerido por WPF-UI 4.x y por WinRT en Fase 2.
+* **ADR-008 (Ubicación de la Base de Datos)**: `%LOCALAPPDATA%\StudyTracker\study_tracker.db`, fuera de OneDrive. Nunca se versiona (`*.db*` en `.gitignore`).
+* **ADR-009 (Automatización Git)**: Un commit por tarea con `complete-task.ps1` (gate build+test → marcar `[x]` → `git add .` → `git commit -m` → `git push origin main`). MCP `git`/`github` en `opencode.json`.
+* **ADR-010 (Memoria Única)**: `MEMORY.md` en la raíz es el único libro de desarrollo; `tasks.md` es la fuente de verdad del estado de tareas y `MEMORY.md` resume progreso, bitácora y decisiones.
+
+---
+
+## 5. Equipo de Agentes
+
+| ID | Rol | Estado | Ficha |
+| :--- | :--- | :--- | :--- |
+| **`00-coordinator`** | Orquestación, ramas, gates | **ACTIVO** | [00-coordinator.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/00-coordinator.agent.md) |
+| **`01-data-core`** | SQLite, Dapper, dominio | **ACTIVO (Fase 1)** | [01-data-core.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/01-data-core.agent.md) |
+| **`02-timer-notifications`** | TimerService, WinRT Toasts | En espera (Fase 2) | [02-timer-notifications.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/02-timer-notifications.agent.md) |
+| **`03-ui-presentation`** | WPF, WPF-UI, LiveCharts2 | En espera (Fases 3-5) | [03-ui-presentation.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/03-ui-presentation.agent.md) |
+| **`04-qa-verification`** | xUnit, criterios Given-When-Then | En espera (T-1.7) | [04-qa-verification.agent.md](file:///c:/Users/jeffr/OneDrive/Documentos/INFORMATICA/PROYECTOS_EN_DESARROLLO/programadorDeEstudios/studyProgrammer/.specify/agents/04-qa-verification.agent.md) |
+
+---
+
+## 6. Estructura Real del Repositorio
 
 ```
 programadorDeEstudios/
-├── .gitignore                          # Artefactos .NET/NuGet/SQLite/MCP/secretos
+├── .gitignore
 ├── opencode.json                       # MCP git + GitHub y permisos
-├── StudyTracker.sln                    # Solución .NET 8
-├── PLAN_ESPECIFICACION.md              # Documento maestro de especificación
-├── MEMORY.md                           # Memoria e índice vivo del sistema
+├── StudyTracker.sln
+├── MEMORY.md                           # Este archivo (memoria única)
+├── PLAN_ESPECIFICACION.md
 ├── src/
-│   ├── StudyTracker.Core/              # Dominio + datos (net8.0)
-│   │   ├── Models/                     # (T-1.3) Topic, StudySession, DTOs
-│   │   ├── Interfaces/                 # ITopicRepository, ISessionRepository...
-│   │   ├── Services/                   # TimerService, StatsService...
-│   │   └── Data/                       # DatabaseInitializer, repositorios
-│   └── StudyTracker.UI/                # WPF + WPF-UI (net8.0-windows10.0.19041.0)
+│   ├── StudyTracker.Core/              # net8.0
+│   │   ├── StudyTracker.Core.csproj    # Dapper 2.1.89 + Microsoft.Data.Sqlite 8.0.33
+│   │   └── Class1.cs                   # placeholder (se retira en T-1.3)
+│   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
+│       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
+│       ├── App.xaml / App.xaml.cs
+│       └── MainWindow.xaml / .xaml.cs  # ventana placeholder
 ├── tests/
-│   └── StudyTracker.Core.Tests/        # xUnit (net8.0)
+│   └── StudyTracker.Core.Tests/        # net8.0
+│       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0
+│       └── UnitTest1.cs                # placeholder (se reemplaza en T-1.7)
 └── studyProgrammer/
-    ├── MEMORY.md                       # Memoria en el submódulo
-    ├── AGENTS.md                       # Topología y gobernanza multi-agente
+    ├── AGENTS.md                       # Gobernanza multi-agente
     ├── .specify/
-    │   ├── memory/constitution.md      # Constitución del proyecto
-    │   ├── agents/                     # Fichas declarativas de agentes (00 al 04)
+    │   ├── feature.json                # Feature activa: 001-study-tracker
+    │   ├── memory/constitution.md
+    │   ├── agents/                     # Fichas 00-04
     │   └── scripts/powershell/         # commit-task.ps1, complete-task.ps1
     └── specs/001-study-tracker/
-        ├── spec.md                     # Requisitos e historias de usuario
-        ├── plan.md                     # Arquitectura técnica y DDL
-        ├── tasks.md                    # Desglose de tareas ejecutables
-        ├── data-model.md               # Modelo relacional y DTOs
-        ├── quickstart.md               # Guía de compilación y ejecución
-        └── contracts/interfaces.md     # Interfaces de servicios C#
+        ├── spec.md
+        ├── plan.md
+        ├── tasks.md                    # Fuente de verdad de tareas
+        ├── data-model.md
+        ├── quickstart.md
+        └── contracts/interfaces.md
 ```
 
 ---
 
-## 5. Próxima Acción Inmediata
+## 7. Notas, Deuda Técnica y Pendientes
 
-El **Subagente Data & Core (`01-data-core`)** debe ejecutar **T-1.3**: crear `Topic`, `StudySession`, `TopicSummaryDto` y `DailyActivityDto` en `src/StudyTracker.Core/Models/` según `data-model.md`, y cerrar con:
+* **Placeholders**: `Class1.cs` y `UnitTest1.cs` se sustituyen en T-1.3 y T-1.7 respectivamente.
+* **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
+* **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
+* **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
+* **MCP GitHub**: el servidor remoto requiere `GITHUB_PERSONAL_ACCESS_TOKEN` en el entorno; el MCP `git` local funciona con el Credential Manager.
+* **Sin `packages.lock.json`**: la restauración usa versiones fijadas en los `.csproj`.
+
+---
+
+## 8. Protocolo de Mantenimiento de esta Memoria
+
+1. Al iniciar cualquier sesión de desarrollo: leer `MEMORY.md` y `studyProgrammer/specs/001-study-tracker/tasks.md`.
+2. Al cerrar cada tarea: actualizar progreso por fase, próxima tarea, bitácora (fecha, tarea, commit, agente, gate) y, si hubo decisión, el ADR correspondiente.
+3. `tasks.md` manda sobre el estado de tareas; `MEMORY.md` resume y contextualiza.
+4. No crear `MEMORY.md` en submódulos ni duplicar el checklist completo.
+5. Todo commit de cierre se hace con `complete-task.ps1` (o `commit-task.ps1` para mantenimiento documental).
+
+---
+
+## 9. Próxima Acción Inmediata
+
+Ejecutar **T-1.3**: crear `Topic`, `StudySession`, `TopicSummaryDto` y `DailyActivityDto` en `src/StudyTracker.Core/Models/` según `data-model.md`, y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
