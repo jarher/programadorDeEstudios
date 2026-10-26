@@ -10,6 +10,7 @@ internal sealed class TestDatabase : IAsyncDisposable
         DatabasePath = databasePath;
         Initializer = new DatabaseInitializer(databasePath);
         Topics = new TopicRepository(Initializer);
+        Sessions = new SessionRepository(Initializer);
     }
 
     public string DatabasePath { get; }
@@ -17,6 +18,8 @@ internal sealed class TestDatabase : IAsyncDisposable
     public DatabaseInitializer Initializer { get; }
 
     public TopicRepository Topics { get; }
+
+    public SessionRepository Sessions { get; }
 
     public static async Task<TestDatabase> CreateAsync()
     {

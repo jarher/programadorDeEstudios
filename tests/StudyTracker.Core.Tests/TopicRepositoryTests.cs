@@ -97,4 +97,41 @@ public class TopicRepositoryTests
         await Assert.ThrowsAsync<ArgumentException>(
             () => database.Topics.SetStatusAsync(id, "INVALID"));
     }
+
+    [Fact]
+    public async Task GetSummariesAsync_AggregatesMinutesProgressAndLastSession()
+    {
+        await using var database = await TestDatabase.CreateAsync();
+        var studiedId = await database.Topics.CreateAsync(new Topic { Title = "Estudiada", TargetHours = 2 });
+        var emptyId = await database.Topics.CreateAsync(new Topic { Title = "Vacía", TargetHours = 0 });
+
+        await database.Sessions.RecordSessionAsync(new StudySession
+        {
+            TopicId = studiedId,
+            StartedAt = new DateTime(2026, 10, 24, 10, 0, 0),
+            EndedAt = new DateTime(2026, 10, 24, 10, 30, 0),
+            PlannedMinutes = 30,
+            ActualMinutes = 30
+        });
+        await database.Sessions.RecordSessionAsync(new StudySession
+        {
+            TopicId = studiedId,
+            StartedAt = new DateTime(2026, 10, 25, 18, 0, 0),
+            EndedAt = new DateTime(2026, 10, 25, 18, 45, 0),
+            PlannedMinutes = 45,
+            ActualMinutes = 45
+        });
+
+        var summaries = (await database.Topics.GetSummariesAsync()).ToDictionary(summary => summary.Topic.Id);
+
+        var studied = summaries[studiedId];
+        Assert.Equal(75, studied.TotalMinutesStudied);
+        Assert.Equal(new DateTime(2026, 10, 25, 18, 45, 0), studied.LastStudiedAt);
+        Assert.Equal(62.5, studied.ProgressPercentage, 6);
+
+        var empty = summaries[emptyId];
+        Assert.Equal(0, empty.TotalMinutesStudied);
+        Assert.Null(empty.LastStudiedAt);
+        Assert.Equal(0, empty.ProgressPercentage);
+    }
 }
