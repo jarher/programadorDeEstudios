@@ -12,7 +12,7 @@
 - [x] **T-1.2**: Instalar paquetes NuGet esenciales: `Microsoft.Data.Sqlite`, `Dapper`, `CommunityToolkit.Mvvm`, `Wpf.Ui`.
 - [x] **T-1.3**: Implementar modelos de dominio en `StudyTracker.Core`: `Topic`, `StudySession`, `TopicSummaryDto`.
 - [x] **T-1.4**: Implementar `DatabaseInitializer` para crear automáticamente las tablas `topics`, `study_sessions` e índices en SQLite.
-- [ ] **T-1.5**: Implementar repositorio `TopicRepository` (CRUD, cálculo de horas acumuladas, cambio de estado activo/completado).
+- [x] **T-1.5**: Implementar repositorio `TopicRepository` (CRUD, cálculo de horas acumuladas, cambio de estado activo/completado).
 - [ ] **T-1.6**: Implementar repositorio `SessionRepository` (inserción de sesión, consulta de historial por fechas).
 - [ ] **T-1.7**: Escribir y ejecutar pruebas unitarias en `StudyTracker.Core.Tests` para verificar la persistencia y cálculos de SQLite.
 

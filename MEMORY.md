@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-1.4 — inicializador SQLite (2026-10-26)  
-**Estado global**: Fase 1 en curso — 4/7 cerradas, próxima T-1.5
+**Último hito cerrado**: T-1.5 — TopicRepository (2026-10-26)  
+**Estado global**: Fase 1 en curso — 5/7 cerradas, próxima T-1.6
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -21,7 +21,7 @@
 | Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 1/1 |
 | Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
-| Repositorios | Pendiente (T-1.5 y T-1.6) |
+| Repositorios | `TopicRepository` implementado (T-1.5); `SessionRepository` pendiente de cierre (T-1.6) |
 | Temporizador / notificaciones | Pendiente (Fase 2) |
 | UI Fluent / analítica | Pendiente (Fases 3-5) |
 
@@ -31,13 +31,13 @@
 
 | Fase | Tareas | Avance | Estado |
 | :--- | :---: | :---: | :--- |
-| Fase 1 — Solución y datos SQLite | 7 | 4/7 | **En curso** |
+| Fase 1 — Solución y datos SQLite | 7 | 5/7 | **En curso** |
 | Fase 2 — Temporizador y Toasts | 3 | 0/3 | Pendiente |
 | Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-1.5` — `TopicRepository` con CRUD, horas acumuladas y cambio de estado.
+**Próxima tarea**: `T-1.6` — `SessionRepository` con registro, historial por temática y actividad diaria.
 
 ---
 
@@ -52,6 +52,7 @@
 | 2026-10-26 | Memoria | `031fc8c` | 00-coordinator | — | Consolidación en un único MEMORY raíz y eliminación del duplicado |
 | 2026-10-26 | T-1.3 | `d6e6354` | 01-data-core | build 0/0; tests 1/1 | Modelos de dominio en Core y retiro de `Class1.cs` |
 | 2026-10-26 | T-1.4 | `9ba6650` | 01-data-core | build 0/0; smoke test OK | `DatabaseInitializer`, tablas, índices y FK con cascada |
+| 2026-10-26 | T-1.5 | — | 01-data-core | build 0/0; tests 5/5 | `ITopicRepository`, `TopicRepository` y pruebas de CRUD/estado |
 
 ---
 
@@ -67,6 +68,7 @@
 * **ADR-008 (Ubicación de la Base de Datos)**: `%LOCALAPPDATA%\StudyTracker\study_tracker.db`, fuera de OneDrive. Nunca se versiona (`*.db*` en `.gitignore`).
 * **ADR-009 (Automatización Git)**: Un commit por tarea con `complete-task.ps1` (gate build+test → marcar `[x]` → `git add .` → `git commit -m` → `git push origin main`). MCP `git`/`github` en `opencode.json`.
 * **ADR-010 (Memoria Única)**: `MEMORY.md` en la raíz es el único libro de desarrollo; `tasks.md` es la fuente de verdad del estado de tareas y `MEMORY.md` resume progreso, bitácora y decisiones.
+* **ADR-011 (Marcas de Tiempo)**: se persisten en hora local con formato ISO 8601 sin zona; si `CreatedAt` llega vacío, los repositorios lo completan con `DateTime.Now`. Las consultas por día usan `date(started_at)`.
 
 ---
 
@@ -94,7 +96,8 @@ programadorDeEstudios/
 ├── src/
 │   ├── StudyTracker.Core/              # net8.0
 │   │   ├── StudyTracker.Core.csproj    # Dapper 2.1.89 + Microsoft.Data.Sqlite 8.0.33
-│   │   ├── Data/                       # DatabaseInitializer (DDL idempotente + FK)
+│   │   ├── Data/                       # DatabaseInitializer + TopicRepository
+│   │   ├── Interfaces/                 # ITopicRepository
 │   │   └── Models/                     # Topic, StudySession, TopicSummaryDto, DailyActivityDto
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
 │       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
@@ -103,7 +106,9 @@ programadorDeEstudios/
 ├── tests/
 │   └── StudyTracker.Core.Tests/        # net8.0
 │       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0
-│       └── UnitTest1.cs                # placeholder (se reemplaza en T-1.7)
+│       ├── TestDatabase.cs             # BD temporal aislada por prueba
+│       ├── TopicRepositoryTests.cs     # CRUD, estado y resúmenes
+│       └── UnitTest1.cs                # placeholder (se retira en T-1.7)
 └── studyProgrammer/
     ├── AGENTS.md                       # Gobernanza multi-agente
     ├── .specify/
@@ -147,10 +152,10 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-1.5**: implementar `TopicRepository` (CRUD, horas acumuladas y cambio de estado) y cerrar con:
+Ejecutar **T-1.6**: implementar `SessionRepository` (registro, historial por temática y agregación diaria con intensidad) y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-1.5 -Type feat -Scope core `
-  -Message "topic repository" -Agent 01-data-core
+  -TaskId T-1.6 -Type feat -Scope core `
+  -Message "session repository" -Agent 01-data-core
 ```
