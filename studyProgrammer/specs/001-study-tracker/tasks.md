@@ -21,7 +21,7 @@
 ## Fase 2: Motor de Temporizador y Notificaciones Windows 11 (SDD)
 
 - [x] **T-2.1**: Implementar `ITimerService` y `TimerService` en `StudyTracker.Core` con soporte para cuenta regresiva, pausas y eventos `Tick` y `Completed`.
-- [ ] **T-2.2**: Escribir pruebas unitarias para `TimerService` (verificar cálculo exacto de tiempo efectivo transcurrido al pausar o terminar).
+- [x] **T-2.2**: Escribir pruebas unitarias para `TimerService` (verificar cálculo exacto de tiempo efectivo transcurrido al pausar o terminar).
 - [ ] **T-2.3**: Implementar `WindowsNotificationService` usando `Microsoft.Toolkit.Uwp.Notifications` para enviar Toasts de inicio y Toasts interactivos de fin de sesión con botones (`Descanso`, `Extender`, `Finalizar`).
 
 ---

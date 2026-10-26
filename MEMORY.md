@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-2.1 — TimerService (2026-10-26)  
-**Estado global**: Fase 2 en curso — 1/3 cerradas, próxima T-2.2
+**Último hito cerrado**: T-2.2 — Pruebas del temporizador (2026-10-26)  
+**Estado global**: Fase 2 en curso — 2/3 cerradas, próxima T-2.3
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -17,12 +17,12 @@
 | Solución `StudyTracker.sln` | Creada en la raíz con 3 proyectos |
 | `StudyTracker.Core` | net8.0; modelos, datos, interfaces y repositorios |
 | `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; ventana por defecto |
-| `StudyTracker.Core.Tests` | net8.0, xUnit; 14 pruebas de integración |
-| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 14/14 |
+| `StudyTracker.Core.Tests` | net8.0, xUnit; 24 pruebas (14 datos + 10 temporizador) |
+| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 24/24 |
 | Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
-| Temporizador | `TimerService` con `TimeProvider` y tick de 250 ms (T-2.1) |
+| Temporizador | `TimerService` + 10 pruebas deterministas (T-2.1/T-2.2) |
 | Notificaciones Windows | Pendiente (T-2.3) |
 | UI Fluent / analítica | Pendiente (Fases 3-5) |
 
@@ -33,12 +33,12 @@
 | Fase | Tareas | Avance | Estado |
 | :--- | :---: | :---: | :--- |
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
-| Fase 2 — Temporizador y Toasts | 3 | 1/3 | **En curso** |
+| Fase 2 — Temporizador y Toasts | 3 | 2/3 | **En curso** |
 | Fase 3 — Dashboard y temáticas | 4 | 0/4 | Pendiente |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-2.2` — pruebas deterministas de `TimerService` (pausa, stop y finalización exacta).
+**Próxima tarea**: `T-2.3` — `WindowsNotificationService` con toasts y acciones interactivas.
 
 ---
 
@@ -57,6 +57,7 @@
 | 2026-10-26 | T-1.6 | `eda825a` | 01-data-core | build 0/0; tests 9/9 | `ISessionRepository`, `SessionRepository` y actividad diaria |
 | 2026-10-26 | T-1.7 | `79e4900` | 04-qa-verification | build 0/0; tests 14/14 | Pruebas de FK, cascada y vacíos; retiro de `UnitTest1.cs` |
 | 2026-10-26 | T-2.1 | — | 02-timer-notifications | build 0/0; tests 14/14 | `ITimerService` y `TimerService` con `TimeProvider` |
+| 2026-10-26 | T-2.2 | — | 04-qa-verification | build 0/0; tests 24/24 | 10 pruebas deterministas con `FakeTimeProvider` |
 
 ---
 
@@ -112,10 +113,11 @@ programadorDeEstudios/
 │       └── MainWindow.xaml / .xaml.cs  # ventana placeholder
 ├── tests/
 │   └── StudyTracker.Core.Tests/        # net8.0
-│       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0
+│       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0, TimeProvider.Testing 8.10.0
 │       ├── TestDatabase.cs             # BD temporal aislada por prueba
 │       ├── TopicRepositoryTests.cs     # CRUD, estado y resúmenes
-│       └── SessionRepositoryTests.cs   # sesiones y actividad diaria
+│       ├── SessionRepositoryTests.cs   # sesiones y actividad diaria
+│       └── TimerServiceTests.cs        # 10 pruebas con FakeTimeProvider
 └── studyProgrammer/
     ├── AGENTS.md                       # Gobernanza multi-agente
     ├── .specify/
@@ -139,6 +141,7 @@ programadorDeEstudios/
 * **Placeholders**: ninguno; `Class1.cs` se retiró en T-1.3 y `UnitTest1.cs` en T-1.7.
 * **Conexión SQLite**: `DatabaseInitializer` crea el directorio, aplica DDL idempotente y usa `ForeignKeys=true` en el connection string.
 * **Pruebas con BD temporal**: llamar `SqliteConnection.ClearAllPools()` antes de borrar el archivo, por el pooling de conexiones.
+* **Pruebas del temporizador**: `FakeTimeProvider` (8.10.0) permite avanzar el reloj sin esperas reales; los tests cubren pausa, stop, reinicio y finalización única.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -159,10 +162,10 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-2.2**: escribir pruebas deterministas de `TimerService` con `FakeTimeProvider` (pausa, stop y finalización) y cerrar con:
+Ejecutar **T-2.3**: implementar `INotificationService` y `WindowsNotificationService` con toasts (inicio, fin y botones Descanso/Extender/Finalizar) y cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-2.2 -Type test -Scope core `
-  -Message "deterministic timer tests" -Agent 04-qa-verification
+  -TaskId T-2.3 -Type feat -Scope core `
+  -Message "windows toast notifications" -Agent 02-timer-notifications
 ```
