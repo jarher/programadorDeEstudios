@@ -3,7 +3,7 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último commit publicado**: `59f2d4f` — `docs(memory): T-1.2 sync MEMORY`  
+**Último hito cerrado**: T-1.2 — commit `541e055` (2026-10-26)  
 **Estado global**: Fase 1 en curso — T-1.1 y T-1.2 cerradas, próxima T-1.3
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
@@ -48,7 +48,7 @@
 | 2026-10-26 | T-1.1 | `f205ba7` | 01-data-core | build 0/0; tests 1/1 | Solución, proyectos Core/UI/Tests y referencias |
 | 2026-10-26 | T-1.2 | `541e055` | 01-data-core | build 0/0; tests 1/1 | NuGet Core/UI, TFM de UI y corrección WPF-UI |
 | 2026-10-26 | Memoria | `59f2d4f` | 00-coordinator | — | Primera sincronización de MEMORY con el estado real |
-| 2026-10-26 | Memoria | — | 00-coordinator | — | Consolidación en un único MEMORY raíz y eliminación del duplicado |
+| 2026-10-26 | Memoria | `031fc8c` | 00-coordinator | — | Consolidación en un único MEMORY raíz y eliminación del duplicado |
 
 ---
 
