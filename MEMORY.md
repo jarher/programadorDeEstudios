@@ -70,7 +70,7 @@
 | 2026-10-26 | T-3.2 | `486f412` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
 | 2026-10-26 | T-3.3 | `34551ff` | 03-ui-presentation | build 0/0; tests 24/24; smoke OK | `DashboardView` Fluent con resumen, tarjetas, progreso y checkbox; cableado en `App` |
 | 2026-10-26 | T-3.4 | `3180ab5` | 03-ui-presentation | build 0/0; tests 24/24; smoke + UIA OK | `AddTopicDialog` con validación y paleta; alta persistente y refresco del dashboard |
-| 2026-10-27 | T-4.1 | — | 03-ui-presentation | build 0/0; tests 24/24; QA 30/30 | `TimerViewModel` reactivo conectado a `ITimerService` y `ITopicRepository` |
+| 2026-10-27 | T-4.1 | `7201115` | 03-ui-presentation | build 0/0; tests 24/24; QA 30/30 | `TimerViewModel` reactivo conectado a `ITimerService` y `ITopicRepository` |
 
 ---
 
