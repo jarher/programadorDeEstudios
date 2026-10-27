@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-26  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-3.3 — `DashboardView` y cableado de arranque (2026-10-26)  
-**Estado global**: Fase 2 completada (3/3); Fase 3 en curso (3/4); próxima T-3.4
+**Último hito cerrado**: T-3.4 — `AddTopicDialog` y alta de temáticas (2026-10-26)  
+**Estado global**: Fase 3 completada (4/4); Fase 4 pendiente (0/4); próxima T-4.1
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -28,7 +28,8 @@
 | Ventana Fluent | `FluentWindow` con Mica, title bar y toggle claro/oscuro (T-3.1) |
 | ViewModel del dashboard | `DashboardViewModel` + `TopicItemViewModel`: listado, toggle de completado y resumen (T-3.2) |
 | Vista del dashboard | `DashboardView` con resumen, tarjetas, progreso y checkbox; composition root en `App` (T-3.3) |
-| Dashboard / analítica | Pendiente (T-3.4 a Fase 5) |
+| Alta de temáticas | `AddTopicDialog` modal con validación y paleta de 10 colores; `AddTopicAsync` persiste y refresca (T-3.4) |
+| Analítica | Pendiente (Fase 5) |
 
 ---
 
@@ -38,11 +39,11 @@
 | :--- | :---: | :---: | :--- |
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
 | Fase 2 — Temporizador y Toasts | 3 | 3/3 | **Completada** |
-| Fase 3 — Dashboard y temáticas | 4 | 3/4 | En curso |
+| Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
 | Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-3.4` — `AddTopicDialog` modal ligero para registrar temáticas con selector de color (Fase 3).
+**Próxima tarea**: `T-4.1` — `TimerViewModel` que conecta la temática seleccionada con `TimerService` (Fase 4).
 
 ---
 
@@ -67,6 +68,7 @@
 | 2026-10-26 | T-3.1 | `ddfe8c8` | 03-ui-presentation | build 0/0; tests 24/24 | Ventana Fluent con Mica, title bar y tema claro/oscuro |
 | 2026-10-26 | T-3.2 | `486f412` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
 | 2026-10-26 | T-3.3 | `34551ff` | 03-ui-presentation | build 0/0; tests 24/24; smoke OK | `DashboardView` Fluent con resumen, tarjetas, progreso y checkbox; cableado en `App` |
+| 2026-10-26 | T-3.4 | `—` | 03-ui-presentation | build 0/0; tests 24/24; smoke + UIA OK | `AddTopicDialog` con validación y paleta; alta persistente y refresco del dashboard |
 
 ---
 
@@ -130,8 +132,8 @@ programadorDeEstudios/
 │       ├── App.xaml / App.xaml.cs      # recursos Wpf.Ui, tema y composition root (SQLite → repo → VM)
 │       ├── Converters/                 # HexToBrushConverter, InverseBooleanConverter
 │       ├── MainWindow.xaml / .xaml.cs  # shell Fluent: Mica, title bar y toggle de tema
-│       ├── ViewModels/                 # DashboardViewModel, TopicItemViewModel
-│       └── Views/                      # DashboardView.xaml + code-behind mínimo
+│       ├── ViewModels/                 # Dashboard, TopicItem, AddTopicDialog, NewTopicRequest, ColorOption
+│       └── Views/                      # DashboardView y AddTopicDialog (code-behind mínimo)
 ├── tests/
 │   └── StudyTracker.Core.Tests/        # net8.0
 │       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0, TimeProvider.Testing 8.10.0
@@ -174,7 +176,11 @@ programadorDeEstudios/
 * **Arranque verificado**: smoke test con la app real (`RUNNING ok`), BD creada en `%LOCALAPPDATA%\StudyTracker\study_tracker.db` sin datos residuales (0/0) y UI Automation confirmó el estado vacío y el resumen en ceros.
 * **Deuda de la vista**: `IsChecked` es `OneWay`; si `SetStatusAsync` devuelve `false`, el checkbox puede quedar marcado visualmente hasta recargar (el banner de error sí aparece). `MainWindow.xaml` conserva los estilos `DisplayTitle`, `LeadText` y `Eyebrow` sin uso tras extraer el contenido al `UserControl`.
 * **RAM en reposo**: en Debug la app mide ~78 MB privados / ~158 MB working set, por encima del objetivo de 50 MB; apunta al runtime WPF/WPF-UI y requiere perfilado en una tarea aparte.
-* **Pendiente ajeno a las tareas**: `.gitignore` tiene un `+opencode.json` sin commitear, previo a T-3.3; no se incluyó en el commit de la tarea.
+* **Alta de temáticas**: `AddTopicDialog` valida en su propio VM (título obligatorio ≤120, descripción ≤400, horas 0–1000 con coma o punto, paleta de 10 colores) y entrega un `NewTopicRequest`; `DashboardViewModel.AddTopicAsync` revalida, crea el `Topic` y refresca con `RefreshAsync()`. La apertura modal vive en `DashboardView.xaml.cs`; el ViewModel no conoce WPF.
+* **Validación en dos capas**: el regex de `ColorHex` y el rango de horas están en `AddTopicDialogViewModel` y el regex se repite en `DashboardViewModel` como defensa; mantener ambos si cambia el contrato.
+* **UX pendiente del diálogo**: `ValidationMessage` se muestra desde que abre el diálogo, antes de que el usuario interactúe; conviene gatearlo a "touched" o al primer intento de envío.
+* **Alta parcial**: si `CreateAsync` tiene éxito y falla el refresco posterior, el banner informa "No se pudo crear la temática" aunque la fila ya exista; sin impacto funcional, se corrige en la fase de endurecimiento.
+* **Pendiente ajeno a las tareas**: `.gitignore` tiene un `+opencode.json` sin commitear, previo a T-3.3; no se incluyó en los commits de T-3.3/T-3.4.
 * **Alcance del esquema**: `plan.md` define solo `topics` + `study_sessions` + índices. `topic_milestones` y `session_notes` (presentes en `PLAN_ESPECIFICACION.md`) quedaron diferidos hasta confirmación.
 * **Documentación desalineada**: `tasks.md` menciona `Wpf.Ui`; el paquete instalado es `WPF-UI` 4.3.0.
 * **Rama de feature**: los documentos citan `001-study-tracker`, pero el trabajo se publica en `main`.
@@ -195,11 +201,11 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-3.4**: crear `Views/AddTopicDialog` (ventana modal ligera con título, descripción, meta de horas y selector de color), añadir el comando de alta en `DashboardViewModel` y conectarlo al botón `+ Nueva Temática` del dashboard. Cerrar con:
+Ejecutar **T-4.1**: implementar `TimerViewModel` que conecta la temática seleccionada con `ITimerService` (selección, duración, comandos de inicio/pausa/reanudación/detenido y estado observable), sin diseñar aún la vista del temporizador. Cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-3.4 -Type feat -Scope ui `
-  -Message "add topic dialog and create command" -Agent 03-ui-presentation `
+  -TaskId T-4.1 -Type feat -Scope ui `
+  -Message "timer view model connected to timer service" -Agent 03-ui-presentation `
   -Paths src/StudyTracker.UI, studyProgrammer/specs/001-study-tracker/tasks.md, MEMORY.md
 ```

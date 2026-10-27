@@ -31,7 +31,7 @@
 - [x] **T-3.1**: Configurar la ventana principal con `Wpf.Ui` y soporte para Fluent Design (Mica de Windows 11 y tema claro/oscuro).
 - [x] **T-3.2**: Implementar `DashboardViewModel` con comandos para listar temáticas, alternar estado a *Completada* y calcular el resumen general.
 - [x] **T-3.3**: Diseñar la vista `DashboardView` con tarjetas de temáticas, barra de progreso hacia la meta de horas, y checkbox de marcaje.
-- [ ] **T-3.4**: Crear el diálogo modal ligero `AddTopicDialog` para registrar nuevas temáticas con selector de color.
+- [x] **T-3.4**: Crear el diálogo modal ligero `AddTopicDialog` para registrar nuevas temáticas con selector de color.
 
 ---
 

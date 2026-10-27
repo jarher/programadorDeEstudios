@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StudyTracker.Core.Interfaces;
@@ -11,6 +12,10 @@ namespace StudyTracker.UI.ViewModels;
 /// </summary>
 public sealed partial class DashboardViewModel : ObservableObject
 {
+    private static readonly Regex ColorHexPattern = new(
+        "^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     private readonly ITopicRepository _topicRepository;
     private double _totalTargetHours;
 
@@ -111,23 +116,73 @@ public sealed partial class DashboardViewModel : ObservableObject
 
         try
         {
-            var summaries = await _topicRepository.GetSummariesAsync();
-            var items = summaries.Select(summary => new TopicItemViewModel(summary)).ToList();
-
-            Topics.Clear();
-
-            foreach (var item in items)
-            {
-                Topics.Add(item);
-            }
-
-            UpdateSummary();
+            await RefreshAsync();
         }
         catch (Exception)
         {
             Topics.Clear();
             UpdateSummary();
             ErrorMessage = "No se pudieron cargar las temáticas. Inténtalo de nuevo.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    public async Task AddTopicAsync(NewTopicRequest? request)
+    {
+        if (request is null || IsBusy)
+        {
+            return;
+        }
+
+        var title = (request.Title ?? string.Empty).Trim();
+        var colorHex = (request.ColorHex ?? string.Empty).Trim();
+
+        var isValid = title.Length is > 0 and <= 120
+            && double.IsFinite(request.TargetHours)
+            && request.TargetHours is >= 0 and <= 1000
+            && ColorHexPattern.IsMatch(colorHex);
+
+        if (!isValid)
+        {
+            ErrorMessage = "Los datos de la temática no son válidos. Revísalos e inténtalo de nuevo.";
+            return;
+        }
+
+        IsBusy = true;
+        ErrorMessage = null;
+
+        try
+        {
+            var description = string.IsNullOrWhiteSpace(request.Description)
+                ? null
+                : request.Description.Trim();
+
+            if (description is { Length: > 400 })
+            {
+                description = description[..400];
+            }
+
+            var topic = new Topic
+            {
+                Title = title,
+                Description = description,
+                ColorHex = colorHex.ToUpperInvariant(),
+                TargetHours = Math.Round(request.TargetHours, 2, MidpointRounding.AwayFromZero),
+                Status = Topic.StatusActive,
+                CompletedAt = null,
+                CreatedAt = DateTime.Now
+            };
+
+            await _topicRepository.CreateAsync(topic);
+            await RefreshAsync();
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "No se pudo crear la temática. Inténtalo de nuevo.";
         }
         finally
         {
@@ -170,6 +225,21 @@ public sealed partial class DashboardViewModel : ObservableObject
         {
             IsBusy = false;
         }
+    }
+
+    private async Task RefreshAsync()
+    {
+        var summaries = await _topicRepository.GetSummariesAsync();
+        var items = summaries.Select(summary => new TopicItemViewModel(summary)).ToList();
+
+        Topics.Clear();
+
+        foreach (var item in items)
+        {
+            Topics.Add(item);
+        }
+
+        UpdateSummary();
     }
 
     private void UpdateSummary()
