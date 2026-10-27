@@ -1,6 +1,7 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Windows;
 using StudyTracker.Core.Data;
+using StudyTracker.Core.Services;
 using StudyTracker.UI.ViewModels;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -14,6 +15,7 @@ public partial class App : Application
         base.OnStartup(e);
 
         DashboardViewModel? viewModel = null;
+        TimerViewModel? timerViewModel = null;
         MainWindow? window = null;
 
         try
@@ -22,7 +24,11 @@ public partial class App : Application
 
             var database = new DatabaseInitializer();
             var repository = new TopicRepository(database);
+            var timerService = new TimerService();
+
             viewModel = new DashboardViewModel(repository);
+            timerViewModel = new TimerViewModel(timerService, repository);
+            var mainViewModel = new MainViewModel(viewModel, timerViewModel);
 
             var databaseReady = false;
 
@@ -38,7 +44,7 @@ public partial class App : Application
                     "No se pudo preparar la base de datos. Revisa los permisos de %LOCALAPPDATA%.";
             }
 
-            window = new MainWindow(viewModel);
+            window = new MainWindow(mainViewModel);
             MainWindow = window;
             window.Show();
 

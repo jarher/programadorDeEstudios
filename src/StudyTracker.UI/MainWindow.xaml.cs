@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Automation;
 using StudyTracker.UI.ViewModels;
 using Wpf.Ui.Appearance;
@@ -8,13 +8,22 @@ namespace StudyTracker.UI;
 
 public partial class MainWindow : FluentWindow
 {
-    public MainWindow(DashboardViewModel viewModel)
+    public MainWindow(MainViewModel viewModel)
     {
         ArgumentNullException.ThrowIfNull(viewModel);
 
         InitializeComponent();
         DataContext = viewModel;
         UpdateThemeButton(ApplicationThemeManager.GetAppTheme());
+    }
+
+    public MainWindow(DashboardViewModel dashboardViewModel)
+        : this(new MainViewModel(
+            dashboardViewModel,
+            new TimerViewModel(
+                new StudyTracker.Core.Services.TimerService(),
+                new StudyTracker.Core.Data.TopicRepository(new StudyTracker.Core.Data.DatabaseInitializer()))))
+    {
     }
 
     private void ThemeButton_Click(object sender, RoutedEventArgs e)

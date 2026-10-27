@@ -1,0 +1,521 @@
+<UserControl x:Class="StudyTracker.UI.Views.TimerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:converters="clr-namespace:StudyTracker.UI.Converters"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d"
+             d:DesignWidth="900"
+             d:DesignHeight="700"
+             FontFamily="Segoe UI Variable Text, Segoe UI"
+             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+             TextOptions.TextFormattingMode="Display"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <converters:HexToBrushConverter x:Key="HexToBrush" />
+        <converters:InverseBooleanConverter x:Key="InverseBoolean" />
+
+        <Style x:Key="DisplayTitle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Variable Display, Segoe UI" />
+            <Setter Property="FontSize" Value="36" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="LineHeight" Value="42" />
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+
+        <Style x:Key="LeadText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="LineHeight" Value="22" />
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+
+        <Style x:Key="Eyebrow" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+        </Style>
+
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+        </Style>
+
+        <Style x:Key="MetaText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="0,0,0,24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Encabezado -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,24">
+                <TextBlock Text="ENFOQUE Y DISCIPLINA" Style="{StaticResource Eyebrow}" />
+                <TextBlock Text="Temporizador de Estudio" Style="{StaticResource DisplayTitle}" Margin="0,6,0,6" />
+                <TextBlock Text="Configura tu bloque de estudio, mantén el foco continuo y registra tu tiempo efectivo."
+                           Style="{StaticResource LeadText}" />
+            </StackPanel>
+
+            <!-- Banner de Error si ErrorMessage tiene valor -->
+            <Border Grid.Row="1"
+                    Margin="0,0,0,20"
+                    Padding="16,12"
+                    CornerRadius="8"
+                    Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
+                    BorderBrush="{DynamicResource SystemFillColorCriticalBrush}"
+                    BorderThickness="1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ErrorMessage}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ErrorMessage}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <DockPanel LastChildFill="True">
+                    <ui:SymbolIcon Symbol="DismissCircle24"
+                                   FontSize="20"
+                                   Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,12,0" />
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                               FontWeight="Medium" />
+                </DockPanel>
+            </Border>
+
+            <!-- Contenido principal: Selector a la izquierda, Anillo y Controles a la derecha -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="340" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Panel Lateral Izquierdo: Configuración de la sesión -->
+                <StackPanel Grid.Column="0" Margin="0,0,28,0">
+                    <!-- Tarjeta 1: Selección de Temática -->
+                    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="20"
+                            Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="TEMÁTICA DE ESTUDIO" Style="{StaticResource SectionLabel}" Margin="0,0,0,12" />
+
+                            <ComboBox ItemsSource="{Binding Topics}"
+                                      SelectedItem="{Binding SelectedTopic, Mode=TwoWay}"
+                                      IsEnabled="{Binding CanConfigure}"
+                                      HorizontalAlignment="Stretch"
+                                      Padding="10,8"
+                                      AutomationProperties.Name="Selección de temática">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Border Width="12"
+                                                    Height="12"
+                                                    CornerRadius="6"
+                                                    Background="{Binding ColorHex, Converter={StaticResource HexToBrush}}"
+                                                    Margin="0,0,10,0"
+                                                    VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <!-- Indicador si no hay temáticas -->
+                            <TextBlock Text="No tienes temáticas activas registradas. Añade una desde el Dashboard para comenzar a cronometrar."
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                       Margin="0,10,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource MetaText}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasTopics}" Value="False">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- Detalle de la temática seleccionada -->
+                            <Border Margin="0,14,0,0"
+                                    Padding="12"
+                                    CornerRadius="8"
+                                    Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedTopic}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel>
+                                    <TextBlock Text="Objetivo de estudio:" Style="{StaticResource MetaText}" />
+                                    <TextBlock Margin="0,2,0,0" FontWeight="SemiBold">
+                                        <Run Text="{Binding SelectedTopic.TargetHours, Mode=OneWay, StringFormat='{}{0:0.#} horas'}" />
+                                        <Run Text="planeadas en meta" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tarjeta 2: Selección de Duración -->
+                    <Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="20">
+                        <StackPanel>
+                            <TextBlock Text="DURACIÓN DEL BLOQUE" Style="{StaticResource SectionLabel}" Margin="0,0,0,12" />
+
+                            <!-- Presets -->
+                            <TextBlock Text="Accesos rápidos" Style="{StaticResource MetaText}" Margin="0,0,0,8" />
+                            <UniformGrid Columns="3" Margin="0,0,0,16">
+                                <ui:Button Content="25 min"
+                                           Command="{Binding SelectDurationCommand}"
+                                           IsEnabled="{Binding CanConfigure}"
+                                           Margin="0,0,6,0"
+                                           HorizontalAlignment="Stretch">
+                                    <ui:Button.CommandParameter>
+                                        <sys:Int32>25</sys:Int32>
+                                    </ui:Button.CommandParameter>
+                                </ui:Button>
+                                <ui:Button Content="45 min"
+                                           Command="{Binding SelectDurationCommand}"
+                                           IsEnabled="{Binding CanConfigure}"
+                                           Margin="3,0,3,0"
+                                           HorizontalAlignment="Stretch">
+                                    <ui:Button.CommandParameter>
+                                        <sys:Int32>45</sys:Int32>
+                                    </ui:Button.CommandParameter>
+                                </ui:Button>
+                                <ui:Button Content="60 min"
+                                           Command="{Binding SelectDurationCommand}"
+                                           IsEnabled="{Binding CanConfigure}"
+                                           Margin="6,0,0,0"
+                                           HorizontalAlignment="Stretch">
+                                    <ui:Button.CommandParameter>
+                                        <sys:Int32>60</sys:Int32>
+                                    </ui:Button.CommandParameter>
+                                </ui:Button>
+                            </UniformGrid>
+
+                            <!-- Entrada manual -->
+                            <TextBlock Text="Entrada personalizada (minutos)" Style="{StaticResource MetaText}" Margin="0,0,0,6" />
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ui:TextBox Text="{Binding PlannedMinutesText, UpdateSourceTrigger=PropertyChanged}"
+                                            IsEnabled="{Binding CanConfigure}"
+                                            PlaceholderText="Ej. 25 o 45"
+                                            VerticalAlignment="Center"
+                                            AutomationProperties.Name="Minutos de estudio" />
+                                <TextBlock Grid.Column="1"
+                                           Text="min"
+                                           VerticalAlignment="Center"
+                                           Margin="10,0,0,0"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                            </Grid>
+
+                            <!-- Duración formateada legible -->
+                            <Border Background="{DynamicResource SubtleFillColorSecondaryBrush}"
+                                    CornerRadius="8"
+                                    Padding="12,10">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <ui:SymbolIcon Symbol="Clock24"
+                                                   FontSize="18"
+                                                   Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                                                   Margin="0,0,10,0"
+                                                   VerticalAlignment="Center" />
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Tiempo planificado" Style="{StaticResource MetaText}" />
+                                        <TextBlock Text="{Binding PlannedDurationText}"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="14" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Panel Derecho: Visualizador Circular del Temporizador y Controles -->
+                <Border Grid.Column="1"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="16"
+                        Padding="36,40">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Indicador superior del estado de la sesión -->
+                        <Border Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                Padding="16,6"
+                                CornerRadius="16"
+                                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="8"
+                                        Height="8"
+                                        CornerRadius="4"
+                                        Margin="0,0,8,0"
+                                        VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                    <Setter Property="Background" Value="#107C41" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                    <Setter Property="Background" Value="#FFB900" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                                <TextBlock Text="{Binding StatusText}"
+                                           FontWeight="SemiBold"
+                                           FontSize="13"
+                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Anillo Central con Progreso y Cronómetro -->
+                        <Grid Grid.Row="1"
+                              Width="320"
+                              Height="320"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Margin="0,24,0,24">
+
+                            <!-- Anillo Circular Fluent Wpf.Ui -->
+                            <ui:ProgressRing Progress="{Binding ProgressPercentage}"
+                                             IsIndeterminate="False"
+                                             Width="310"
+                                             Height="310"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center" />
+
+                            <!-- Contenido interno centrado -->
+                            <StackPanel HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Margin="24">
+
+                                <!-- Píldora de temática seleccionada dentro del círculo -->
+                                <Border HorizontalAlignment="Center"
+                                        CornerRadius="12"
+                                        Padding="10,4"
+                                        Margin="0,0,0,12"
+                                        Background="{DynamicResource SubtleFillColorSecondaryBrush}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedTopic}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Border Width="8"
+                                                Height="8"
+                                                CornerRadius="4"
+                                                Background="{Binding SelectedTopic.ColorHex, Converter={StaticResource HexToBrush}}"
+                                                Margin="0,0,6,0"
+                                                VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding SelectedTopic.Title}"
+                                                   FontSize="12"
+                                                   FontWeight="SemiBold"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Tiempo Restante Digital Grande -->
+                                <TextBlock Text="{Binding RemainingTimeText}"
+                                           FontFamily="Segoe UI Variable Display, Segoe UI"
+                                           FontSize="54"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+
+                                <!-- Métricas secundarias: Tiempo Efectivo y Porcentaje -->
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center"
+                                            Margin="0,8,0,0">
+                                    <TextBlock Text="Efectivo: " Style="{StaticResource MetaText}" />
+                                    <TextBlock Text="{Binding ElapsedTimeText}"
+                                               FontWeight="SemiBold"
+                                               FontSize="12"
+                                               Margin="0,0,12,0" />
+                                    <TextBlock Text="Avance: " Style="{StaticResource MetaText}" />
+                                    <TextBlock Text="{Binding ProgressText}"
+                                               FontWeight="SemiBold"
+                                               FontSize="12" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Fila de Botones de Control de la Sesión -->
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,12,0,0">
+
+                            <!-- Botón INICIAR (Visible en Idle, Completed o Stopped) -->
+                            <ui:Button Command="{Binding StartCommand}"
+                                       Appearance="Primary"
+                                       Padding="26,12"
+                                       Margin="8,0"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       ToolTip="Iniciar sesión de estudio"
+                                       AutomationProperties.Name="Iniciar sesión">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Play24" Margin="0,0,10,0" />
+                                    <TextBlock Text="Iniciar Sesión" />
+                                </StackPanel>
+                            </ui:Button>
+
+                            <!-- Botón PAUSAR (Visible cuando está Running) -->
+                            <ui:Button Command="{Binding PauseCommand}"
+                                       Appearance="Secondary"
+                                       Padding="26,12"
+                                       Margin="8,0"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       ToolTip="Pausar temporizador"
+                                       AutomationProperties.Name="Pausar sesión">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Pause24" Margin="0,0,10,0" />
+                                    <TextBlock Text="Pausar" />
+                                </StackPanel>
+                            </ui:Button>
+
+                            <!-- Botón REANUDAR (Visible cuando está Paused) -->
+                            <ui:Button Command="{Binding ResumeCommand}"
+                                       Appearance="Primary"
+                                       Padding="26,12"
+                                       Margin="8,0"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       ToolTip="Reanudar sesión de estudio"
+                                       AutomationProperties.Name="Reanudar sesión">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Play24" Margin="0,0,10,0" />
+                                    <TextBlock Text="Reanudar" />
+                                </StackPanel>
+                            </ui:Button>
+
+                            <!-- Botón DETENER (Habilitado cuando está en Running o Paused) -->
+                            <ui:Button Command="{Binding StopCommand}"
+                                       Appearance="Secondary"
+                                       Padding="24,12"
+                                       Margin="8,0"
+                                       FontSize="15"
+                                       ToolTip="Detener bloque de estudio"
+                                       AutomationProperties.Name="Detener sesión">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsIdle}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsStopped}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Stop24" Margin="0,0,8,0" />
+                                    <TextBlock Text="Detener" />
+                                </StackPanel>
+                            </ui:Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
