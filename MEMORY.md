@@ -1,10 +1,10 @@
 # MEMORY.md — Memoria General del Proyecto
 **Proyecto**: StudyProgrammer (Programador y Monitor de Estudios)  
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
-**Última Actualización**: 2026-10-26  
+**Última Actualización**: 2026-10-27  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-3.4 — `AddTopicDialog` y alta de temáticas (2026-10-26)  
-**Estado global**: Fase 3 completada (4/4); Fase 4 pendiente (0/4); próxima T-4.1
+**Último hito cerrado**: T-4.1 — `TimerViewModel` y conexión con `TimerService` (2026-10-27)  
+**Estado global**: Fase 3 completada (4/4); Fase 4 en curso (1/4); próxima T-4.2
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -29,6 +29,7 @@
 | ViewModel del dashboard | `DashboardViewModel` + `TopicItemViewModel`: listado, toggle de completado y resumen (T-3.2) |
 | Vista del dashboard | `DashboardView` con resumen, tarjetas, progreso y checkbox; composition root en `App` (T-3.3) |
 | Alta de temáticas | `AddTopicDialog` modal con validación y paleta de 10 colores; `AddTopicAsync` persiste y refresca (T-3.4) |
+| ViewModel del temporizador | `TimerViewModel` + `TimerState`: integración con `TimerService`, temáticas y presets (T-4.1) |
 | Analítica | Pendiente (Fase 5) |
 
 ---
@@ -40,10 +41,10 @@
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
 | Fase 2 — Temporizador y Toasts | 3 | 3/3 | **Completada** |
 | Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
-| Fase 4 — Temporizador y mini-widget | 4 | 0/4 | Pendiente |
+| Fase 4 — Temporizador y mini-widget | 4 | 1/4 | **En curso** |
 | Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
 
-**Próxima tarea**: `T-4.1` — `TimerViewModel` que conecta la temática seleccionada con `TimerService` (Fase 4).
+**Próxima tarea**: `T-4.2` — Diseñar la interfaz del temporizador con selector de duración, barra circular y controles (Fase 4).
 
 ---
 
@@ -69,6 +70,7 @@
 | 2026-10-26 | T-3.2 | `486f412` | 03-ui-presentation | build 0/0; tests 24/24 | `DashboardViewModel` y `TopicItemViewModel`: listado, toggle persistente y resumen |
 | 2026-10-26 | T-3.3 | `34551ff` | 03-ui-presentation | build 0/0; tests 24/24; smoke OK | `DashboardView` Fluent con resumen, tarjetas, progreso y checkbox; cableado en `App` |
 | 2026-10-26 | T-3.4 | `3180ab5` | 03-ui-presentation | build 0/0; tests 24/24; smoke + UIA OK | `AddTopicDialog` con validación y paleta; alta persistente y refresco del dashboard |
+| 2026-10-27 | T-4.1 | — | 03-ui-presentation | build 0/0; tests 24/24; QA 30/30 | `TimerViewModel` reactivo conectado a `ITimerService` y `ITopicRepository` |
 
 ---
 
@@ -201,11 +203,11 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-4.1**: implementar `TimerViewModel` que conecta la temática seleccionada con `ITimerService` (selección, duración, comandos de inicio/pausa/reanudación/detenido y estado observable), sin diseñar aún la vista del temporizador. Cerrar con:
+Ejecutar **T-4.2**: diseñar la interfaz del temporizador con selector de duración (presets de 25m, 45m, 60m o entrada manual), barra circular de progreso y botones `Iniciar`, `Pausar`, `Detener`. Cerrar con:
 
 ```powershell
 .\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-4.1 -Type feat -Scope ui `
-  -Message "timer view model connected to timer service" -Agent 03-ui-presentation `
+  -TaskId T-4.2 -Type feat -Scope ui `
+  -Message "timer view with duration selector and controls" -Agent 03-ui-presentation `
   -Paths src/StudyTracker.UI, studyProgrammer/specs/001-study-tracker/tasks.md, MEMORY.md
 ```

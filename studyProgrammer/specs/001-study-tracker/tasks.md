@@ -37,7 +37,7 @@
 
 ## Fase 4: Vista de Temporizador Bajo Demanda (ODD / UI)
 
-- [ ] **T-4.1**: Implementar `TimerViewModel` que conecta la temática seleccionada con `TimerService`.
+- [x] **T-4.1**: Implementar `TimerViewModel` que conecta la temática seleccionada con `TimerService`.
 - [ ] **T-4.2**: Diseñar la interfaz del temporizador con selector de duración (presets de 25m, 45m, 60m o entrada manual), barra circular de progreso y botones `Iniciar`, `Pausar`, `Detener`.
 - [ ] **T-4.3**: Implementar diálogo de micro-journaling al finalizar el bloque para registrar notas de lo aprendido.
 - [ ] **T-4.4**: Implementar modo mini-widget o minimización en la bandeja del sistema (System Tray).
