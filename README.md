@@ -85,6 +85,31 @@ if ($LASTEXITCODE -ne 0) { throw "Falló la compilación del instalador." }
 
 El script fuente del instalador está en `installer\StudyProgrammer.iss`.
 
+### Ubicación y permisos de instalación
+
+El instalador actual está configurado para instalarse sin elevación:
+`PrivilegesRequired=lowest` y la carpeta predeterminada es
+`%LOCALAPPDATA%\Programs\StudyProgrammer`. Por eso no puede escribir en
+directorios protegidos como `C:\Program Files` o `C:\Program Files (x86)` si
+el usuario no tiene permisos allí. Se eligió este modo para que el MVP pueda
+instalarse desde una cuenta estándar, sin pedir credenciales de administrador.
+
+Sí es posible ofrecer una instalación para todo el equipo o en una carpeta
+protegida. Inno Setup permite configurar `PrivilegesRequired=admin`; Windows
+mostrará el aviso de Control de cuentas de usuario (UAC) y solicitará una
+cuenta con permisos administrativos. Se puede usar `{autopf}` como carpeta
+predeterminada para una instalación de equipo y permitir que el usuario elija
+otra ruta. La elevación permite escribir en ubicaciones protegidas, pero no
+ignora las políticas o permisos que el administrador haya establecido.
+
+Esto requeriría cambiar y volver a compilar el instalador; el instalador MVP
+actual **no** solicita elevación. Instalar la aplicación con permisos de
+administrador tampoco significa que deba ejecutarse siempre como administrador:
+la app puede iniciarse con los permisos normales del usuario. La base SQLite
+continúa guardándose por usuario en `%LOCALAPPDATA%\StudyTracker`, no junto al
+ejecutable. Así, cada cuenta de Windows mantiene sus propios datos incluso si
+la aplicación se instala una sola vez para todo el equipo.
+
 ## Desarrollo
 
 Restaurar, compilar y ejecutar las pruebas desde la raíz:
