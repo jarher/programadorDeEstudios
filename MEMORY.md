@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-27  
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-4.2 — `TimerView`, selector de duración y controles (2026-10-27)  
-**Estado global**: Fase 3 completada (4/4); Fase 4 en curso (2/4); próxima T-4.3
+**Último hito cerrado**: T-5.4 — analítica, integración y publicación win-x64 (2026-10-27)
+**Estado global**: Fases 1-5 completadas (T-5.1 a T-5.4)
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -17,8 +17,8 @@
 | Solución `StudyTracker.sln` | Creada en la raíz con 3 proyectos |
 | `StudyTracker.Core` | net8.0 + net8.0-windows10.0.19041.0; dominio, datos, temporizador y notificaciones |
 | `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; shell Fluent con Mica, title bar y tema adaptable |
-| `StudyTracker.Core.Tests` | net8.0, xUnit; 24 pruebas (14 datos + 10 temporizador) |
-| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 24/24 |
+| `StudyTracker.Core.Tests` | net8.0, xUnit; 29 pruebas (19 persistencia/analítica + 10 temporizador) |
+| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 29/29; publish autónomo win-x64 |
 | Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
@@ -31,7 +31,10 @@
 | Alta de temáticas | `AddTopicDialog` modal con validación y paleta de 10 colores; `AddTopicAsync` persiste y refresca (T-3.4) |
 | ViewModel del temporizador | `TimerViewModel` + `TimerState`: integración con `TimerService`, temáticas y presets (T-4.1) |
 | Vista del temporizador | `TimerView` + `MainViewModel`: selector, presets, ProgressRing y controles Iniciar/Pausar/Detener (T-4.2) |
-| Analítica | Pendiente (Fase 5) |
+| Micro-journaling | `SessionJournalDialog` registra notas y sesiones finalizadas/detenidas en SQLite (T-4.3) |
+| Mini-widget y bandeja | `FloatingTimerWindow`, controles rápidos y bandeja para restaurar/salir (T-4.4) |
+| Analítica | Vista navegable con mapa de calor, racha, dona LiveCharts2 y barras de metas (T-5.1/T-5.2/T-5.3) |
+| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-win-x64/` (T-5.4) |
 
 ---
 
@@ -42,10 +45,10 @@
 | Fase 1 — Solución y datos SQLite | 7 | 7/7 | **Completada** |
 | Fase 2 — Temporizador y Toasts | 3 | 3/3 | **Completada** |
 | Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
-| Fase 4 — Temporizador y mini-widget | 4 | 2/4 | **En curso** |
-| Fase 5 — Mapa de calor y analítica | 4 | 0/4 | Pendiente |
+| Fase 4 — Temporizador y mini-widget | 4 | 4/4 | **Completada** |
+| Fase 5 — Mapa de calor y analítica | 4 | 4/4 | **Completada** |
 
-**Próxima tarea**: `T-4.3` — Implementar diálogo de micro-journaling al finalizar el bloque para registrar notas (Fase 4).
+**Próxima tarea**: Fases 1-5 completadas; pendiente definir el siguiente bloque de trabajo.
 
 ---
 
@@ -73,6 +76,12 @@
 | 2026-10-26 | T-3.4 | `3180ab5` | 03-ui-presentation | build 0/0; tests 24/24; smoke + UIA OK | `AddTopicDialog` con validación y paleta; alta persistente y refresco del dashboard |
 | 2026-10-27 | T-4.1 | `7201115` | 03-ui-presentation | build 0/0; tests 24/24; QA 30/30 | `TimerViewModel` reactivo conectado a `ITimerService` y `ITopicRepository` |
 | 2026-10-27 | T-4.2 | `87f0ec3` | 03-ui-presentation | build 0/0; tests 24/24; smoke OK | `TimerView` con ProgressRing, presets, selector y controles; navegación en MainWindow |
+| 2026-10-27 | T-4.3 | — (sin commit) | Copilot | build 0/0; tests 24/24 | Diálogo de micro-journaling; persistencia de sesiones y notas con reintento ante fallo |
+| 2026-10-27 | T-4.4 | — (sin commit) | Copilot | build 0/0; tests 24/24 | Mini-widget siempre visible, pausar/reanudar, restauración y salida desde System Tray |
+| 2026-10-27 | T-5.1 | — (sin commit) | Copilot | build Core 0/0; tests 28/28 | `StatsService`, fechas activas, serie de 3 meses con días vacíos y racha sin límite de ventana |
+| 2026-10-27 | T-5.2 | — (sin commit) | Copilot | build UI 0/0; tests 28/28 | Vista de analítica navegable con cuadrícula lunes-domingo, meses, 5 intensidades, tooltips y resumen de racha |
+| 2026-10-27 | T-5.3 | — (sin commit) | Copilot | build UI 0/0; tests 29/29 | Dona LiveCharts2 con porcentajes y tiempo por temática; barras horizontales de metas con detalle de avance |
+| 2026-10-27 | T-5.4 | — (sin commit) | Copilot | build/publish win-x64 OK; tests 29/29 | Prueba de integración SQLite→analítica→resúmenes y perfil autocontenido single-file de Windows x64 |
 
 ---
 
@@ -127,23 +136,26 @@ programadorDeEstudios/
 │   ├── StudyTracker.Core/              # net8.0 + net8.0-windows10.0.19041.0
 │   │   ├── StudyTracker.Core.csproj    # Dapper + SQLite; Notifications 7.1.3 solo en windows
 │   │   ├── Data/                       # DatabaseInitializer, TopicRepository, SessionRepository
-│   │   ├── Interfaces/                 # ITopicRepository, ISessionRepository, ITimerService, INotificationService
-│   │   ├── Models/                     # Topic, StudySession, TopicSummaryDto, DailyActivityDto
+│   │   ├── Interfaces/                 # Repositorios, ITimerService, INotificationService, IStatsService
+│   │   ├── Models/                     # Topic, StudySession y DTOs de resumen/actividad/estadísticas
 │   │   ├── Notifications/              # NotificationAction, NotificationActionEventArgs
-│   │   └── Services/                   # TimerService, WindowsNotificationService
+│   │   └── Services/                   # TimerService, StatsService, WindowsNotificationService
 │   └── StudyTracker.UI/                # net8.0-windows10.0.19041.0
-│       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm 8.4.2
+│       ├── StudyTracker.UI.csproj      # WPF-UI 4.3.0 + CommunityToolkit.Mvvm + LiveCharts2
 │       ├── App.xaml / App.xaml.cs      # recursos Wpf.Ui, tema y composition root (SQLite → repo → VM)
 │       ├── Converters/                 # HexToBrushConverter, InverseBooleanConverter
 │       ├── MainWindow.xaml / .xaml.cs  # shell Fluent: Mica, title bar y toggle de tema
-│       ├── ViewModels/                 # Dashboard, TopicItem, AddTopicDialog, NewTopicRequest, ColorOption
-│       └── Views/                      # DashboardView y AddTopicDialog (code-behind mínimo)
+│       ├── Properties/PublishProfiles/ # Publicación autocontenida single-file win-x64
+│       ├── ViewModels/                 # Dashboard, temporizador, analítica y modelos de diálogo
+│       └── Views/                      # Dashboard, Timer, Stats heatmap/charts, diálogos y FloatingTimerWindow
 ├── tests/
 │   └── StudyTracker.Core.Tests/        # net8.0
 │       ├── StudyTracker.Core.Tests.csproj  # xUnit 2.5.3, Test.Sdk 17.8.0, TimeProvider.Testing 8.10.0
 │       ├── TestDatabase.cs             # BD temporal aislada por prueba
 │       ├── TopicRepositoryTests.cs     # CRUD, estado y resúmenes
 │       ├── SessionRepositoryTests.cs   # sesiones y actividad diaria
+│       ├── StatsServiceTests.cs        # período, días vacíos y racha
+│       ├── StudyAnalyticsEndToEndTests.cs # Persistencia, actividad, racha y metas
 │       └── TimerServiceTests.cs        # 10 pruebas con FakeTimeProvider
 └── studyProgrammer/
     ├── AGENTS.md                       # Gobernanza multi-agente
@@ -169,6 +181,12 @@ programadorDeEstudios/
 * **Conexión SQLite**: `DatabaseInitializer` crea el directorio, aplica DDL idempotente y usa `ForeignKeys=true` en el connection string.
 * **Pruebas con BD temporal**: llamar `SqliteConnection.ClearAllPools()` antes de borrar el archivo, por el pooling de conexiones.
 * **Pruebas del temporizador**: `FakeTimeProvider` (8.10.0) permite avanzar el reloj sin esperas reales; los tests cubren pausa, stop, reinicio y finalización única.
+* **Analítica T-5.1**: `StatsService` devuelve una fecha por día en el rango inclusivo `[asOfDate - 3 meses, asOfDate]`; los huecos tienen 0 minutos/intensidad. La racha cuenta sesiones con minutos positivos, empieza hoy o ayer y consulta todas las fechas previas para no truncarse al rango del mapa.
+* **Mapa de calor T-5.2**: `StatsViewModel` adapta el período en 13-14 columnas de semanas (lunes a domingo); `StatsView` aplica una escala de cinco niveles, tooltips accesibles con fecha/minutos, leyenda, estado vacío y acceso desde la navegación principal.
+* **Gráficas T-5.3**: `LiveChartsCore.SkiaSharpView.WPF` 2.0.5 dibuja la dona por minutos (porcentajes en leyenda) y barras horizontales de metas acotadas al 100%; la vista también muestra valores legibles para accesibilidad y temas.
+* **Publicación T-5.4**: `Properties/PublishProfiles/win-x64.pubxml` produce un único ejecutable self-contained, incluyendo bibliotecas nativas SkiaSharp con extracción automática, en `artifacts/StudyProgrammer-win-x64/`. La salida se excluye de Git por `artifacts/`.
+* **Persistencia de sesiones**: `TimerViewModel` usa `ISessionRepository`; al concluir o detener un bloque abre micro-journaling y permite reintentar un guardado fallido.
+* **Modo de bandeja/widget**: `MainWindow` permanece residente al cerrarse/minimizarse; la salida explícita está en el menú contextual del icono de bandeja.
 * **Notificaciones**: `Microsoft.Toolkit.Uwp.Notifications` 7.1.3 funciona sin MSIX en Windows 10 1809+; el servicio solo se compila en el TFM de Windows y las acciones llegan por `ActionInvoked`.
 * **Agentes opencode**: `.opencode/` está ignorado por Git; los agentes son locales. Se recrean desde `AGENTS.md` §3.2 y las fichas canónicas. El coordinador no edita código y los subagentes no hacen commits.
 * **Cierre con scripts**: invocar `complete-task.ps1`/`commit-task.ps1` directamente con `&`, nunca a través de `rtk` (falla con `.ps1`). Solo el coordinador cierra tareas.
@@ -205,11 +223,4 @@ programadorDeEstudios/
 
 ## 9. Próxima Acción Inmediata
 
-Ejecutar **T-4.3**: implementar diálogo de micro-journaling al finalizar el bloque para registrar notas de lo aprendido. Cerrar con:
-
-```powershell
-.\studyProgrammer\.specify\scripts\powershell\complete-task.ps1 `
-  -TaskId T-4.3 -Type feat -Scope ui `
-  -Message "session micro-journaling dialog on timer completion" -Agent 03-ui-presentation `
-  -Paths src/StudyTracker.UI, studyProgrammer/specs/001-study-tracker/tasks.md, MEMORY.md
-```
+Las tareas T-1.1 a T-5.4 están completas. El siguiente paso requiere definir nuevas necesidades del producto.

@@ -1,0 +1,96 @@
+<Window x:Class="StudyTracker.UI.Views.FloatingTimerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="StudyProgrammer — modo flotante"
+        Width="330"
+        Height="166"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStartupLocation="Manual"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        UseLayoutRounding="True">
+    <Border Background="#F21D252D"
+            BorderBrush="#557F8C96"
+            BorderThickness="1"
+            CornerRadius="18"
+            Padding="18">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0"
+                       LastChildFill="True"
+                       MouseLeftButtonDown="Window_MouseLeftButtonDown">
+                <Button DockPanel.Dock="Right"
+                        Content="×"
+                        Width="28"
+                        Height="26"
+                        Padding="0"
+                        FontSize="18"
+                        Foreground="#C8D0D8"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="ReturnToMain_Click"
+                        ToolTip="Volver a la ventana principal"
+                        AutomationProperties.Name="Volver a la ventana principal" />
+                <TextBlock Text="{Binding SelectedTopic.Title, TargetNullValue=Estudio}"
+                           Foreground="#C8D0D8"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0" />
+            </DockPanel>
+
+            <TextBlock Grid.Row="1"
+                       Text="{Binding RemainingTimeText}"
+                       Foreground="White"
+                       FontFamily="Segoe UI Variable Display, Segoe UI"
+                       FontSize="43"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+
+            <DockPanel Grid.Row="2" LastChildFill="False">
+                <TextBlock Text="{Binding StatusText}"
+                           Foreground="#AAB6C2"
+                           FontSize="11"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0" />
+                <Button Padding="12,5"
+                        Foreground="White"
+                        Background="#315D78"
+                        BorderThickness="0"
+                        Click="PauseResume_Click"
+                        ToolTip="Pausar o reanudar el temporizador"
+                        AutomationProperties.Name="Pausar o reanudar sesión">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Content" Value="Pausar" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                    <Setter Property="Content" Value="Reanudar" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>

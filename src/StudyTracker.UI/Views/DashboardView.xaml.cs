@@ -1,10 +1,9 @@
 using System.Windows;
-using System.Windows.Controls;
 using StudyTracker.UI.ViewModels;
 
 namespace StudyTracker.UI.Views;
 
-public partial class DashboardView : UserControl
+public partial class DashboardView : System.Windows.Controls.UserControl
 {
     public DashboardView()
     {
@@ -21,7 +20,7 @@ public partial class DashboardView : UserControl
         try
         {
             var dialog = new AddTopicDialog();
-            var owner = Window.GetWindow(this) ?? Application.Current?.MainWindow;
+            var owner = Window.GetWindow(this) ?? System.Windows.Application.Current?.MainWindow;
 
             if (owner is not null)
             {

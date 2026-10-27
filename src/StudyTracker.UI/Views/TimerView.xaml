@@ -284,43 +284,64 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <!-- Indicador superior del estado de la sesión -->
-                        <Border Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                Padding="16,6"
-                                CornerRadius="16"
-                                Background="{DynamicResource SubtleFillColorSecondaryBrush}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border Width="8"
-                                        Height="8"
-                                        CornerRadius="4"
-                                        Margin="0,0,8,0"
-                                        VerticalAlignment="Center">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{DynamicResource TextFillColorTertiaryBrush}" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
-                                                    <Setter Property="Background" Value="#107C41" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                                    <Setter Property="Background" Value="#FFB900" />
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                </Border>
-                                <TextBlock Text="{Binding StatusText}"
-                                           FontWeight="SemiBold"
-                                           FontSize="13"
-                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                            </StackPanel>
-                        </Border>
+                        <!-- Estado de sesión y acceso al modo flotante -->
+                        <DockPanel Grid.Row="0" LastChildFill="False">
+                            <Border HorizontalAlignment="Center"
+                                    Padding="16,6"
+                                    CornerRadius="16"
+                                    Background="{DynamicResource SubtleFillColorSecondaryBrush}"
+                                    DockPanel.Dock="Left">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Border Width="8"
+                                            Height="8"
+                                            CornerRadius="4"
+                                            Margin="0,0,8,0"
+                                            VerticalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                                        <Setter Property="Background" Value="#107C41" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                                        <Setter Property="Background" Value="#FFB900" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                    <TextBlock Text="{Binding StatusText}"
+                                               FontWeight="SemiBold"
+                                               FontSize="13"
+                                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                </StackPanel>
+                            </Border>
+                            <ui:Button Content="Modo flotante"
+                                       Appearance="Transparent"
+                                       IsEnabled="{Binding IsActive}"
+                                       Click="FloatingMode_Click"
+                                       ToolTip="Mantener el contador visible sobre otras ventanas"
+                                       DockPanel.Dock="Right"
+                                       AutomationProperties.Name="Abrir modo flotante">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAwaitingJournal}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                            </ui:Button>
+                        </DockPanel>
 
                         <!-- Anillo Central con Progreso y Cronómetro -->
                         <Grid Grid.Row="1"
@@ -512,6 +533,29 @@
                                     <TextBlock Text="Detener" />
                                 </StackPanel>
                             </ui:Button>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="3"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,16,0,0">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAwaitingJournal}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <TextBlock Text="La sesión está pendiente de guardarse."
+                                       Style="{StaticResource MetaText}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,8" />
+                            <ui:Button Content="Añadir nota y guardar"
+                                       Appearance="Primary"
+                                       Click="RetryJournal_Click"
+                                       AutomationProperties.Name="Reintentar registro de sesión" />
                         </StackPanel>
                     </Grid>
                 </Border>

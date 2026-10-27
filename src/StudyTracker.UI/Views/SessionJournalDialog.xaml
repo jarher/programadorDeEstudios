@@ -1,0 +1,80 @@
+<ui:FluentWindow x:Class="StudyTracker.UI.Views.SessionJournalDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 mc:Ignorable="d"
+                 Title="Cierre de sesión"
+                 Width="520"
+                 SizeToContent="Height"
+                 ResizeMode="NoResize"
+                 WindowStartupLocation="CenterOwner"
+                 ShowInTaskbar="False"
+                 WindowBackdropType="Mica"
+                 WindowCornerPreference="Round"
+                 ExtendsContentIntoTitleBar="True"
+                 Background="Transparent"
+                 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                 FontFamily="Segoe UI Variable Text, Segoe UI"
+                 TextOptions.TextFormattingMode="Display"
+                 UseLayoutRounding="True"
+                 SnapsToDevicePixels="True"
+                 Loaded="SessionJournalDialog_Loaded">
+    <ui:FluentWindow.Resources>
+        <Style x:Key="HelpText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+            <Setter Property="Margin" Value="0,18,0,7" />
+        </Style>
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Cierre de sesión"
+                     ShowHelp="False"
+                     ShowMinimize="False"
+                     ShowMaximize="False" />
+
+        <StackPanel Grid.Row="1" Margin="24,4,24,24">
+            <TextBlock Text="¿Qué aprendiste en este bloque? Anota una idea breve para reforzar lo aprendido."
+                       Style="{StaticResource HelpText}" />
+
+            <TextBlock Text="NOTAS DE APRENDIZAJE (OPCIONAL)" Style="{StaticResource FieldLabel}" />
+            <ui:TextBox x:Name="NotesTextBox"
+                        Height="140"
+                        MaxLength="1000"
+                        AcceptsReturn="True"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto"
+                        PlaceholderText="Por ejemplo: Comprendí cómo funcionan las interfaces en C#."
+                        AutomationProperties.Name="Notas de aprendizaje" />
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,22,0,0">
+                <ui:Button Content="Omitir"
+                           Appearance="Secondary"
+                           Click="Skip_Click"
+                           Margin="0,0,8,0"
+                           AutomationProperties.Name="Omitir notas y guardar sesión" />
+                <ui:Button Content="Guardar nota"
+                           Appearance="Primary"
+                           Click="Save_Click"
+                           AutomationProperties.Name="Guardar nota de aprendizaje" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

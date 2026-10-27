@@ -47,7 +47,7 @@ public sealed class HexToBrushConverter : IValueConverter
 
         try
         {
-            var color = (Color)ColorConverter.ConvertFromString(candidate);
+            var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(candidate);
             brush = new SolidColorBrush(color);
             brush.Freeze();
             return true;
@@ -60,7 +60,7 @@ public sealed class HexToBrushConverter : IValueConverter
 
     private static SolidColorBrush CreateFallbackBrush()
     {
-        var brush = new SolidColorBrush(Color.FromRgb(0x8A, 0x8A, 0x8A));
+        var brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x8A, 0x8A, 0x8A));
         brush.Freeze();
         return brush;
     }

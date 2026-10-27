@@ -8,7 +8,7 @@ using Wpf.Ui.Controls;
 
 namespace StudyTracker.UI;
 
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -24,11 +24,14 @@ public partial class App : Application
 
             var database = new DatabaseInitializer();
             var repository = new TopicRepository(database);
+            var sessionRepository = new SessionRepository(database);
             var timerService = new TimerService();
+            var statsService = new StatsService(sessionRepository);
 
             viewModel = new DashboardViewModel(repository);
-            timerViewModel = new TimerViewModel(timerService, repository);
-            var mainViewModel = new MainViewModel(viewModel, timerViewModel);
+            timerViewModel = new TimerViewModel(timerService, repository, sessionRepository);
+            var statsViewModel = new StatsViewModel(statsService, repository);
+            var mainViewModel = new MainViewModel(viewModel, timerViewModel, statsViewModel);
 
             var databaseReady = false;
 
@@ -66,6 +69,11 @@ public partial class App : Application
         catch (Exception ex)
         {
             Debug.WriteLine($"No se pudo iniciar el panel de estudio: {ex}");
+            System.Windows.MessageBox.Show(
+                $"No se pudo iniciar StudyProgrammer.\n\n{ex.Message}",
+                "Error al iniciar StudyProgrammer",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
 
             if (viewModel is not null)
             {
@@ -75,6 +83,10 @@ public partial class App : Application
             if (window is not null && !window.IsVisible)
             {
                 window.Show();
+            }
+            else if (window is null)
+            {
+                Shutdown(-1);
             }
         }
     }

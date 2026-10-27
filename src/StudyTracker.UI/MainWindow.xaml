@@ -100,7 +100,6 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <StackPanel Margin="24,22,24,0">
@@ -191,55 +190,48 @@
                             </ui:Button>
                         </Border>
 
-                        <!-- Opción Analítica (Fase 5) -->
-                        <Border CornerRadius="8" Padding="12,10" Margin="0,2">
-                            <StackPanel Orientation="Horizontal">
-                                <ui:SymbolIcon Symbol="DataBarVertical24"
-                                               FontSize="18"
-                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                                <TextBlock Text="Analítica"
-                                           Style="{StaticResource NavMuted}"
-                                           Margin="12,0,0,0"
-                                           VerticalAlignment="Center" />
-                                <Border Background="{DynamicResource SubtleFillColorSecondaryBrush}"
-                                        CornerRadius="4"
-                                        Padding="6,1"
-                                        Margin="8,0,0,0"
-                                        VerticalAlignment="Center">
-                                    <TextBlock Text="Pronto"
-                                               FontSize="10"
-                                               Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
-                                </Border>
-                            </StackPanel>
+                        <!-- Opción Analítica -->
+                        <Border CornerRadius="8" Margin="0,2">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsStatsActive}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <ui:Button Command="{Binding NavigateToCommand}"
+                                       CommandParameter="Stats"
+                                       Appearance="Transparent"
+                                       HorizontalAlignment="Stretch"
+                                       HorizontalContentAlignment="Left"
+                                       Padding="12,10"
+                                       AutomationProperties.Name="Ir a Analítica">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="DataBarVertical24"
+                                                   FontSize="18"
+                                                   Foreground="{DynamicResource AccentFillColorDefaultBrush}" />
+                                    <TextBlock Text="Analítica"
+                                               Style="{StaticResource NavLabel}"
+                                               FontWeight="SemiBold"
+                                               Margin="12,0,0,0"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </ui:Button>
                         </Border>
                     </StackPanel>
 
-                    <Border Grid.Row="2"
-                            Margin="16,0,16,20"
-                            Padding="14"
-                            CornerRadius="10"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="FASE 4" Style="{StaticResource SectionLabel}" />
-                            <TextBlock Text="Temporizador Activo"
-                                       FontSize="13"
-                                       FontWeight="SemiBold"
-                                       Margin="0,4,0,2" />
-                            <TextBlock Text="Enfoque y control por bloques."
-                                       Style="{StaticResource MetaText}" />
-                        </StackPanel>
-                    </Border>
                 </Grid>
             </Border>
 
             <!-- Área de Vistas Principales -->
             <Grid Grid.Column="1" Margin="40,28,40,32">
                 <!-- Vista del Dashboard -->
-                <views:DashboardView DataContext="{Binding Dashboard}">
-                    <views:DashboardView.Style>
-                        <Style TargetType="views:DashboardView">
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsDashboardActive}" Value="True">
@@ -247,13 +239,14 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </views:DashboardView.Style>
-                </views:DashboardView>
+                    </Grid.Style>
+                    <views:DashboardView DataContext="{Binding Dashboard}" />
+                </Grid>
 
                 <!-- Vista del Temporizador -->
-                <views:TimerView DataContext="{Binding Timer}">
-                    <views:TimerView.Style>
-                        <Style TargetType="views:TimerView">
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsTimerActive}" Value="True">
@@ -261,8 +254,24 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </views:TimerView.Style>
-                </views:TimerView>
+                    </Grid.Style>
+                    <views:TimerView x:Name="TimerControl" DataContext="{Binding Timer}" />
+                </Grid>
+
+                <!-- Vista del Mapa de Calor -->
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsStatsActive}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <views:StatsView DataContext="{Binding Stats}" />
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

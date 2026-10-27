@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Data.Sqlite;
 using StudyTracker.Core.Interfaces;
 using StudyTracker.Core.Models;
 
@@ -18,10 +20,12 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
 
     private readonly ITimerService _timerService;
     private readonly ITopicRepository _topicRepository;
+    private readonly ISessionRepository _sessionRepository;
     private readonly SynchronizationContext? _syncContext;
     private readonly object _sessionDurationGate = new();
 
     private TimeSpan _sessionDuration;
+    private StudySession? _pendingSession;
 
     private int _disposed;
 
@@ -58,13 +62,24 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private int _sessionPlannedMinutes;
 
-    public TimerViewModel(ITimerService timerService, ITopicRepository topicRepository)
+    [ObservableProperty]
+    private bool _isAwaitingJournal;
+
+    [ObservableProperty]
+    private string? _pendingJournalNotes;
+
+    public TimerViewModel(
+        ITimerService timerService,
+        ITopicRepository topicRepository,
+        ISessionRepository sessionRepository)
     {
         ArgumentNullException.ThrowIfNull(timerService);
         ArgumentNullException.ThrowIfNull(topicRepository);
+        ArgumentNullException.ThrowIfNull(sessionRepository);
 
         _timerService = timerService;
         _topicRepository = topicRepository;
+        _sessionRepository = sessionRepository;
         _syncContext = SynchronizationContext.Current;
 
         _timerService.Tick += OnTimerTick;
@@ -101,7 +116,8 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
 
     public bool IsActive => IsRunning || IsPaused;
 
-    public bool CanConfigure => State is TimerState.Idle or TimerState.Completed or TimerState.Stopped;
+    public bool CanConfigure =>
+        !IsAwaitingJournal && State is (TimerState.Idle or TimerState.Completed or TimerState.Stopped);
 
     public bool CanStart => SelectedTopic is not null && HasValidDuration && CanConfigure;
 
@@ -125,6 +141,8 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
         TimerState.Stopped => "Sesión detenida",
         _ => "Listo para empezar"
     };
+
+    public event EventHandler? JournalRequested;
 
     [RelayCommand]
     public async Task LoadTopicsAsync()
@@ -274,6 +292,41 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
 
         State = TimerState.Stopped;
         SessionEndedAt = DateTimeOffset.Now;
+        RequestSessionJournal();
+    }
+
+    public async Task<bool> SavePendingSessionAsync(string? notes)
+    {
+        if (_pendingSession is null || !IsAwaitingJournal)
+        {
+            return false;
+        }
+
+        var normalizedNotes = string.IsNullOrWhiteSpace(notes)
+            ? null
+            : notes.Trim();
+        normalizedNotes = normalizedNotes is { Length: > 1000 }
+            ? normalizedNotes[..1000]
+            : normalizedNotes;
+        PendingJournalNotes = normalizedNotes;
+        _pendingSession.Notes = normalizedNotes;
+
+        try
+        {
+            await _sessionRepository.RecordSessionAsync(_pendingSession);
+        }
+        catch (SqliteException ex)
+        {
+            Debug.WriteLine($"No se pudo guardar la sesión de estudio: {ex}");
+            ErrorMessage = "No se pudo guardar la sesión. Revisa el almacenamiento e inténtalo de nuevo.";
+            return false;
+        }
+
+        _pendingSession = null;
+        PendingJournalNotes = null;
+        IsAwaitingJournal = false;
+        ErrorMessage = null;
+        return true;
     }
 
     public void Dispose()
@@ -314,6 +367,12 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(CanResume));
         OnPropertyChanged(nameof(CanStop));
         OnPropertyChanged(nameof(StatusText));
+    }
+
+    partial void OnIsAwaitingJournalChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanConfigure));
+        OnPropertyChanged(nameof(CanStart));
     }
 
     partial void OnRemainingTimeChanged(TimeSpan value)
@@ -390,6 +449,32 @@ public sealed partial class TimerViewModel : ObservableObject, IDisposable
         ProgressPercentage = 100;
         State = TimerState.Completed;
         SessionEndedAt = DateTimeOffset.Now;
+        RequestSessionJournal();
+    }
+
+    private void RequestSessionJournal()
+    {
+        if (SessionStartedAt is not { } startedAt
+            || SessionEndedAt is not { } endedAt
+            || SelectedTopic is not { } topic
+            || IsAwaitingJournal)
+        {
+            return;
+        }
+
+        _pendingSession = new StudySession
+        {
+            TopicId = topic.Id,
+            StartedAt = startedAt.LocalDateTime,
+            EndedAt = endedAt.LocalDateTime,
+            PlannedMinutes = SessionPlannedMinutes,
+            ActualMinutes = Math.Max(0, (int)Math.Floor(ElapsedTime.TotalMinutes)),
+            SessionType = StudySession.TypeTimed
+        };
+
+        PendingJournalNotes = null;
+        IsAwaitingJournal = true;
+        JournalRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void RefreshFromService()

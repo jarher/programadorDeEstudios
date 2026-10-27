@@ -89,6 +89,21 @@ public sealed class SessionRepository : ISessionRepository
         return activity;
     }
 
+    public async Task<IEnumerable<DateTime>> GetActiveStudyDatesAsync(DateTime throughDate)
+    {
+        const string sql = """
+            SELECT DISTINCT date(started_at)
+            FROM study_sessions
+            WHERE actual_minutes > 0
+              AND date(started_at) <= date(@ThroughDate)
+            ORDER BY date(started_at) DESC;
+            """;
+
+        await using var connection = _database.CreateConnection();
+        await connection.OpenAsync();
+        return await connection.QueryAsync<DateTime>(sql, new { ThroughDate = throughDate });
+    }
+
     private static int CalculateIntensity(int totalMinutes) => totalMinutes switch
     {
         <= 0 => 0,

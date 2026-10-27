@@ -47,3 +47,8 @@ Representa un bloque de tiempo de estudio efectivamente realizado.
 - `Date`: `yyyy-MM-dd`.
 - `TotalMinutes`: Minutos acumulados en ese día calendario.
 - `IntensityLevel`: Nivel del 0 al 4 para pintar la cuadrícula.
+
+#### `StudyStatisticsDto` (Resumen de analítica)
+- `FromDate` y `ToDate`: límites inclusivos del período reciente de tres meses.
+- `DailyActivity`: una entrada por cada día del período; los días sin sesiones tienen 0 minutos e intensidad 0.
+- `CurrentStreak`: días activos consecutivos hasta hoy, o hasta ayer si hoy aún no hay actividad.

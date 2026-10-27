@@ -9,4 +9,6 @@ public interface ISessionRepository
     Task<IEnumerable<StudySession>> GetByTopicIdAsync(int topicId);
 
     Task<IEnumerable<DailyActivityDto>> GetDailyActivityAsync(DateTime fromDate, DateTime toDate);
+
+    Task<IEnumerable<DateTime>> GetActiveStudyDatesAsync(DateTime throughDate);
 }

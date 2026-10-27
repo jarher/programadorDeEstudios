@@ -39,14 +39,14 @@
 
 - [x] **T-4.1**: Implementar `TimerViewModel` que conecta la temática seleccionada con `TimerService`.
 - [x] **T-4.2**: Diseñar la interfaz del temporizador con selector de duración (presets de 25m, 45m, 60m o entrada manual), barra circular de progreso y botones `Iniciar`, `Pausar`, `Detener`.
-- [ ] **T-4.3**: Implementar diálogo de micro-journaling al finalizar el bloque para registrar notas de lo aprendido.
-- [ ] **T-4.4**: Implementar modo mini-widget o minimización en la bandeja del sistema (System Tray).
+- [x] **T-4.3**: Implementar diálogo de micro-journaling al finalizar el bloque para registrar notas de lo aprendido.
+- [x] **T-4.4**: Implementar modo mini-widget o minimización en la bandeja del sistema (System Tray).
 
 ---
 
 ## Fase 5: Analítica de Progreso y Métricas (ODD / UI)
 
-- [ ] **T-5.1**: Implementar `StatsService` para calcular el historial de actividad diaria de los últimos 3 meses y la racha de días activos.
-- [ ] **T-5.2**: Diseñar el control visual del **Mapa de Calor** (cuadrícula estilo GitHub) con gradiente de intensidad de estudio.
-- [ ] **T-5.3**: Integrar gráficos con `LiveCharts2`: Gráfica de dona (distribución porcentual por temática) y barras de avance de metas.
-- [ ] **T-5.4**: Pruebas de integración de extremo a extremo y empaquetado del ejecutable.
+- [x] **T-5.1**: Implementar `StatsService` para calcular el historial de actividad diaria de los últimos 3 meses y la racha de días activos.
+- [x] **T-5.2**: Diseñar el control visual del **Mapa de Calor** (cuadrícula estilo GitHub) con gradiente de intensidad de estudio.
+- [x] **T-5.3**: Integrar gráficos con `LiveCharts2`: Gráfica de dona (distribución porcentual por temática) y barras de avance de metas.
+- [x] **T-5.4**: Pruebas de integración de extremo a extremo y empaquetado del ejecutable.
