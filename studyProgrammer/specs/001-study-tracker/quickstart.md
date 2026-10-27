@@ -26,7 +26,7 @@
    ```powershell
    dotnet publish src/StudyTracker.UI -p:PublishProfile=win-x64
    ```
-   El ejecutable autocontenido se genera en `artifacts/StudyProgrammer-win-x64/StudyTracker.UI.exe`.
+   El ejecutable autocontenido se genera en `artifacts/StudyProgrammer-final-win-x64/StudyTracker.UI.exe`.
    No requiere instalar el runtime de .NET; la primera ejecución puede extraer las bibliotecas nativas de SkiaSharp.
 
 ## Flujo Básico de Uso

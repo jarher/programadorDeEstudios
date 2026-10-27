@@ -34,7 +34,7 @@
 | Micro-journaling | `SessionJournalDialog` registra notas y sesiones finalizadas/detenidas en SQLite (T-4.3) |
 | Mini-widget y bandeja | `FloatingTimerWindow`, controles rápidos y bandeja para restaurar/salir (T-4.4) |
 | Analítica | Vista navegable con mapa de calor, racha, dona LiveCharts2 y barras de metas (T-5.1/T-5.2/T-5.3) |
-| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-win-x64/` (T-5.4) |
+| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4) |
 
 ---
 
@@ -184,7 +184,7 @@ programadorDeEstudios/
 * **Analítica T-5.1**: `StatsService` devuelve una fecha por día en el rango inclusivo `[asOfDate - 3 meses, asOfDate]`; los huecos tienen 0 minutos/intensidad. La racha cuenta sesiones con minutos positivos, empieza hoy o ayer y consulta todas las fechas previas para no truncarse al rango del mapa.
 * **Mapa de calor T-5.2**: `StatsViewModel` adapta el período en 13-14 columnas de semanas (lunes a domingo); `StatsView` aplica una escala de cinco niveles, tooltips accesibles con fecha/minutos, leyenda, estado vacío y acceso desde la navegación principal.
 * **Gráficas T-5.3**: `LiveChartsCore.SkiaSharpView.WPF` 2.0.5 dibuja la dona por minutos (porcentajes en leyenda) y barras horizontales de metas acotadas al 100%; la vista también muestra valores legibles para accesibilidad y temas.
-* **Publicación T-5.4**: `Properties/PublishProfiles/win-x64.pubxml` produce un único ejecutable self-contained, incluyendo bibliotecas nativas SkiaSharp con extracción automática, en `artifacts/StudyProgrammer-win-x64/`. La salida se excluye de Git por `artifacts/`.
+* **Publicación T-5.4**: `Properties/PublishProfiles/win-x64.pubxml` produce un ejecutable self-contained, incluyendo bibliotecas nativas SkiaSharp con extracción automática, en `artifacts/StudyProgrammer-final-win-x64/`. La salida se excluye de Git por `artifacts/`.
 * **Persistencia de sesiones**: `TimerViewModel` usa `ISessionRepository`; al concluir o detener un bloque abre micro-journaling y permite reintentar un guardado fallido.
 * **Modo de bandeja/widget**: `MainWindow` permanece residente al cerrarse/minimizarse; la salida explícita está en el menú contextual del icono de bandeja.
 * **Notificaciones**: `Microsoft.Toolkit.Uwp.Notifications` 7.1.3 funciona sin MSIX en Windows 10 1809+; el servicio solo se compila en el TFM de Windows y las acciones llegan por `ActionInvoked`.
