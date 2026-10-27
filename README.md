@@ -109,18 +109,14 @@ seguridad, cierra la aplicación y copia el archivo de base de datos.
 ## Herramientas utilizadas
 
 ### Asistencia de IA
-
+- **Google Gemini** utilizada para investigación y planificación con base en los
+  requisitos funcionales de la aplicación.
+- **Spec Kit** (https://github.com/github/spec-kit), herramienta de documentación para agentes de IA que implementa el estándar SDD.
 - **Copilot SDK en VS Code** se usó como asistente para implementar cambios,
   investigar fallos, preparar pruebas y actualizar documentación. Las
   propuestas se contrastaron con el código, el comportamiento de la aplicación
   y los resultados de las pruebas; la IA no sustituye la revisión del
   desarrollador.
-- El proyecto también cuenta con **perfiles locales de agentes de OpenCode**:
-  coordinación, datos/Core, temporizador y notificaciones, interfaz, y QA.
-  Están definidos en `.opencode/agents/` y sus instrucciones canónicas se
-  encuentran en `studyProgrammer/AGENTS.md`. Son configuración de desarrollo,
-  no una dependencia de la aplicación; que un perfil exista no significa que
-  se haya utilizado para cada tarea.
 
 ### Herramientas de desarrollo y tecnología
 
@@ -166,16 +162,3 @@ contexto concreto y criterios de aceptación observables. Sus sugerencias deben
 tratarse como hipótesis hasta que el código, las pruebas y la ejecución las
 confirmen.
 
-## Recomendaciones para próximas etapas
-
-- Incorporar pruebas de interfaz automatizadas para navegación, creación de
-  temáticas y flujos del temporizador; la mayoría de las pruebas actuales
-  cubren Core y no sustituyen la validación visual de WPF.
-- Añadir una compilación y ejecución de pruebas en integración continua sobre
-  Windows, y registrar claramente el resultado de cada publicación.
-- Mantener los diagnósticos de fallos con el mensaje y la excepción completos,
-  sin guardar notas de estudio, credenciales u otros datos personales en logs
-  ni en prompts enviados a servicios externos.
-- Revisar por una persona los cambios propuestos por IA y probarlos en el
-  ejecutable final, no solo en el editor. Mantener los datos de demostración
-  separados y eliminarlos al cerrar cada prueba.
