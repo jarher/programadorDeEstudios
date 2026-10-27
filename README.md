@@ -59,6 +59,32 @@ Desde la raíz del proyecto:
 La carpeta `artifacts` está excluida de Git. Para generar la publicación,
 consulta las instrucciones siguientes.
 
+## Instalador para Windows
+
+El MVP se distribuye con un instalador por usuario para Windows x64. No pide
+permisos de administrador, instala la aplicación en el perfil del usuario,
+crea un acceso directo en el menú Inicio y ofrece crear otro en el escritorio.
+El desinstalador elimina la aplicación, pero conserva la base de datos del
+usuario en `%LOCALAPPDATA%\StudyTracker`.
+
+El instalador compilado queda en
+`artifacts\installer\StudyProgrammer-Setup-0.1.0-win-x64.exe`. Para generarlo
+desde la raíz del repositorio, instala Inno Setup 6 y ejecuta:
+
+```powershell
+dotnet publish .\src\StudyTracker.UI\StudyTracker.UI.csproj -p:PublishProfile=win-x64
+$iscc = @(
+  "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe",
+  "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+  "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+) | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $iscc) { throw "No se encontró ISCC.exe de Inno Setup 6." }
+& $iscc .\installer\StudyProgrammer.iss
+if ($LASTEXITCODE -ne 0) { throw "Falló la compilación del instalador." }
+```
+
+El script fuente del instalador está en `installer\StudyProgrammer.iss`.
+
 ## Desarrollo
 
 Restaurar, compilar y ejecutar las pruebas desde la raíz:
@@ -161,4 +187,3 @@ La asistencia de IA resulta más fiable cuando recibe un error reproducible,
 contexto concreto y criterios de aceptación observables. Sus sugerencias deben
 tratarse como hipótesis hasta que el código, las pruebas y la ejecución las
 confirmen.
-
