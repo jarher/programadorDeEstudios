@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-28
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-6.2 — tarjetas de temáticas alineadas con la captura (2026-10-28)
-**Estado global**: Fases 1-6 completadas
+**Último hito cerrado**: T-6.3 — tarjetas de temáticas a ancho completo (2026-10-28)
+**Estado global**: Fases 1-6 completadas; T-6.1/T-6.2/T-6.3 cerradas
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -38,6 +38,7 @@
 | Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4/T-6.1/T-6.2) |
 | Detalle de temáticas | Ventana modal con resumen, sesiones y notas desde el dashboard (T-6.1) |
 | Tarjetas del dashboard | Layout alineado con la captura de referencia y checkbox integrado en la tarjeta (T-6.2) |
+| Ancho de tarjetas | Se elimina el espacio que reservaba la columna del panel retirado; la lista y cada tarjeta ocupan el ancho disponible y se verifica en WPF (T-6.3) |
 
 ---
 
@@ -50,9 +51,9 @@
 | Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
 | Fase 4 — Temporizador y mini-widget | 4 | 4/4 | **Completada** |
 | Fase 5 — Mapa de calor y analítica | 4 | 4/4 | **Completada** |
-| Fase 6 — Detalle de temáticas y publicación | 2 | 2/2 | **Completada** |
+| Fase 6 — Detalle de temáticas y publicación | 3 | 3/3 | **Completada** |
 
-**Próxima tarea**: Definir el siguiente bloque de trabajo.
+**Última validación**: `dotnet build` sin errores ni advertencias; `dotnet test` 32/32; publicación win-x64 e instalador compilados correctamente. T-6.3 publicada en `main` (`5fed10b`).
 
 ---
 
@@ -88,6 +89,7 @@
 | 2026-10-27 | T-5.4 | — (sin commit) | Copilot | build/publish win-x64 OK; tests 29/29 | Prueba de integración SQLite→analítica→resúmenes y perfil autocontenido single-file de Windows x64 |
 | 2026-10-28 | T-6.1 | `dc310b3` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Ventana modal con resumen, historial/notas; prueba de interacción WPF y paquete instalado por usuario |
 | 2026-10-28 | T-6.2 | `bbbc7ac` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Alinear tarjeta de temática con la captura y mantener el checkbox dentro de la tarjeta |
+| 2026-10-28 | T-6.3 | `5fed10b` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Retirar la columna del panel fijo obsoleto y forzar el ancho completo de la lista y tarjetas; comprobación WPF y publicación a `main` |
 
 ---
 
