@@ -28,7 +28,7 @@ public partial class App : System.Windows.Application
             var timerService = new TimerService();
             var statsService = new StatsService(sessionRepository);
 
-            viewModel = new DashboardViewModel(repository);
+            viewModel = new DashboardViewModel(repository, sessionRepository);
             timerViewModel = new TimerViewModel(timerService, repository, sessionRepository);
             var statsViewModel = new StatsViewModel(statsService, repository);
             var mainViewModel = new MainViewModel(viewModel, timerViewModel, statsViewModel);

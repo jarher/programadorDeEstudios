@@ -36,9 +36,20 @@ public sealed class TopicItemViewModel : ObservableObject
 
     public bool IsArchived => string.Equals(_status, Topic.StatusArchived, StringComparison.Ordinal);
 
+    public string StatusText => _status switch
+    {
+        Topic.StatusCompleted => "Completada",
+        Topic.StatusArchived => "Archivada",
+        _ => "Activa"
+    };
+
+    public bool IsSelected { get; private set; }
+
     public DateTime? CompletedAt => _completedAt;
 
     public DateTime? LastStudiedAt => _summary.LastStudiedAt;
+
+    public DateTime CreatedAt => _summary.Topic.CreatedAt;
 
     public int TotalMinutesStudied => _summary.TotalMinutesStudied;
 
@@ -88,7 +99,19 @@ public sealed class TopicItemViewModel : ObservableObject
         OnPropertyChanged(nameof(Status));
         OnPropertyChanged(nameof(IsCompleted));
         OnPropertyChanged(nameof(IsArchived));
+        OnPropertyChanged(nameof(StatusText));
         OnPropertyChanged(nameof(CompletedAt));
+    }
+
+    public void ApplySelection(bool isSelected)
+    {
+        if (IsSelected == isSelected)
+        {
+            return;
+        }
+
+        IsSelected = isSelected;
+        OnPropertyChanged(nameof(IsSelected));
     }
 
     private static string FormatMinutes(int minutes)

@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3E508428
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyTracker.Core.Tests", "tests\StudyTracker.Core.Tests\StudyTracker.Core.Tests.csproj", "{549588DE-33F6-4971-A179-CFA4F7CC0EAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudyTracker.UI.Tests", "tests\StudyTracker.UI.Tests\StudyTracker.UI.Tests.csproj", "{D1CE0377-9A94-4EB4-B4B6-0AE0E1E1DA8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +36,15 @@ Global
 		{549588DE-33F6-4971-A179-CFA4F7CC0EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{549588DE-33F6-4971-A179-CFA4F7CC0EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{549588DE-33F6-4971-A179-CFA4F7CC0EAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1CE0377-9A94-4EB4-B4B6-0AE0E1E1DA8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1CE0377-9A94-4EB4-B4B6-0AE0E1E1DA8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1CE0377-9A94-4EB4-B4B6-0AE0E1E1DA8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1CE0377-9A94-4EB4-B4B6-0AE0E1E1DA8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CD5EC6F6-50F1-4278-8BE5-17984213436B} = {C966D0F0-1B9E-4364-9078-64C5A4F27191}
 		{AECA7B9C-A483-45D7-9DF1-E60732393B83} = {C966D0F0-1B9E-4364-9078-64C5A4F27191}
 		{549588DE-33F6-4971-A179-CFA4F7CC0EAC} = {3E508428-C54A-44C1-AB23-A2F2BE64C731}
+		{D1CE0377-9A94-4EB4-B4B6-0AE0E1E1DA8B} = {3E508428-C54A-44C1-AB23-A2F2BE64C731}
 	EndGlobalSection
 EndGlobal

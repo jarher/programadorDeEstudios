@@ -130,6 +130,8 @@ try {
     }
     $bodyLines += ('Tests: ' + $(if ($testPlanned) { 'dotnet test executed' } else { 'not run' }))
     $bodyLines += ('Build: ' + $(if ($buildPlanned) { 'dotnet build executed' } else { 'not run' }))
+    $bodyLines += ''
+    $bodyLines += 'Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>'
     $commitBody = $bodyLines -join "`n"
 
     if ($DryRun) {

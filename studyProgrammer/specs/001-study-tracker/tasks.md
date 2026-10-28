@@ -50,3 +50,9 @@
 - [x] **T-5.2**: Diseñar el control visual del **Mapa de Calor** (cuadrícula estilo GitHub) con gradiente de intensidad de estudio.
 - [x] **T-5.3**: Integrar gráficos con `LiveCharts2`: Gráfica de dona (distribución porcentual por temática) y barras de avance de metas.
 - [x] **T-5.4**: Pruebas de integración de extremo a extremo y empaquetado del ejecutable.
+
+---
+
+## Fase 6: Detalle de temáticas y publicación
+
+- [x] **T-6.1**: Reemplazar el panel fijo de detalle por una ventana modal con resumen, historial y notas; verificar la interacción WPF, ejecutar las pruebas y empaquetar el instalador Windows x64.

@@ -27,6 +27,8 @@ se eliminaron después; la base de desarrollo quedó vacía.
 
 - Crear temáticas con descripción, color y meta de horas; consultar su avance
   y marcarlas como completadas.
+- Abrir una ventana modal desde una temática del dashboard para consultar su
+  descripción, progreso, fechas, historial de sesiones y notas.
 - Programar sesiones con accesos rápidos de 25, 45 o 60 minutos, o indicar
   una duración personalizada. Pausar o detener el temporizador cuando sea
   necesario.
@@ -154,6 +156,8 @@ seguridad, cierra la aplicación y copia el archivo de base de datos.
   notificaciones y servicios de analítica.
 - `src/StudyTracker.UI`: aplicación WPF, vistas, navegación y ventanas.
 - `tests/StudyTracker.Core.Tests`: pruebas automatizadas de Core.
+- `tests/StudyTracker.UI.Tests`: pruebas de interacción WPF para los detalles
+  de temáticas.
 - `studyProgrammer/specs`: especificación y guía de inicio rápido.
 - `docs/screenshots`: capturas incluidas en este README.
 

@@ -42,4 +42,40 @@ public partial class DashboardView : System.Windows.Controls.UserControl
             viewModel.ErrorMessage = "No se pudo abrir el diálogo para crear la temática. Inténtalo de nuevo.";
         }
     }
+
+    private async void TopicDetails_Click(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is not DashboardViewModel viewModel
+            || sender is not FrameworkElement { DataContext: TopicItemViewModel topic })
+        {
+            return;
+        }
+
+        await viewModel.SelectTopicAsync(topic);
+
+        var dialog = new TopicDetailsDialog
+        {
+            DataContext = viewModel
+        };
+        var owner = Window.GetWindow(this) ?? System.Windows.Application.Current?.MainWindow;
+
+        if (owner is not null)
+        {
+            dialog.Owner = owner;
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        }
+        else
+        {
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        }
+
+        try
+        {
+            dialog.ShowDialog();
+        }
+        finally
+        {
+            viewModel.ClearSelectedTopic();
+        }
+    }
 }

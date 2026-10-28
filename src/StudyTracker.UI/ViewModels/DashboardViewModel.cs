@@ -17,7 +17,9 @@ public sealed partial class DashboardViewModel : ObservableObject
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private readonly ITopicRepository _topicRepository;
+    private readonly ISessionRepository _sessionRepository;
     private double _totalTargetHours;
+    private long _sessionLoadVersion;
 
     [ObservableProperty]
     private bool _isBusy;
@@ -49,23 +51,53 @@ public sealed partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasOverallTarget;
 
-    public DashboardViewModel(ITopicRepository topicRepository)
+    [ObservableProperty]
+    private TopicItemViewModel? _selectedTopic;
+
+    [ObservableProperty]
+    private bool _isLoadingSelectedTopic;
+
+    [ObservableProperty]
+    private string? _selectedTopicErrorMessage;
+
+    public DashboardViewModel(ITopicRepository topicRepository, ISessionRepository sessionRepository)
     {
         ArgumentNullException.ThrowIfNull(topicRepository);
+        ArgumentNullException.ThrowIfNull(sessionRepository);
 
         _topicRepository = topicRepository;
+        _sessionRepository = sessionRepository;
         Topics.CollectionChanged += (_, _) =>
         {
             OnPropertyChanged(nameof(HasTopics));
             OnPropertyChanged(nameof(IsEmpty));
         };
+        SelectedSessions.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(HasSelectedSessions));
+            OnPropertyChanged(nameof(HasNoSelectedSessions));
+        };
     }
 
     public ObservableCollection<TopicItemViewModel> Topics { get; } = [];
 
+    public ObservableCollection<StudySession> SelectedSessions { get; } = [];
+
     public bool HasTopics => Topics.Count > 0;
 
     public bool IsEmpty => !IsBusy && !HasTopics;
+
+    public bool HasSelectedTopic => SelectedTopic is not null;
+
+    public bool HasSelectedSessions => SelectedSessions.Count > 0;
+
+    public bool HasSelectedTopicError => !string.IsNullOrEmpty(SelectedTopicErrorMessage);
+
+    public bool HasNoSelectedSessions =>
+        HasSelectedTopic
+        && !IsLoadingSelectedTopic
+        && !HasSelectedSessions
+        && !HasSelectedTopicError;
 
     public string OverallProgressText => HasOverallTarget
         ? $"{FormatMinutes(TotalMinutesStudied)} de {FormatHours(_totalTargetHours)} objetivo"
@@ -108,6 +140,28 @@ public sealed partial class DashboardViewModel : ObservableObject
         OnPropertyChanged(nameof(IsEmpty));
     }
 
+    partial void OnSelectedTopicChanging(TopicItemViewModel? value)
+    {
+        SelectedTopic?.ApplySelection(false);
+    }
+
+    partial void OnSelectedTopicChanged(TopicItemViewModel? value)
+    {
+        value?.ApplySelection(true);
+        OnPropertyChanged(nameof(HasSelectedTopic));
+        OnPropertyChanged(nameof(HasNoSelectedSessions));
+    }
+
+    partial void OnIsLoadingSelectedTopicChanged(bool value)
+    {
+        OnPropertyChanged(nameof(HasNoSelectedSessions));
+    }
+
+    partial void OnSelectedTopicErrorMessageChanged(string? value)
+    {
+        OnPropertyChanged(nameof(HasSelectedTopicError));
+    }
+
     [RelayCommand]
     public async Task LoadAsync()
     {
@@ -121,6 +175,7 @@ public sealed partial class DashboardViewModel : ObservableObject
         catch (Exception)
         {
             Topics.Clear();
+            ClearSelectedTopic();
             UpdateSummary();
             ErrorMessage = "No se pudieron cargar las temáticas. Inténtalo de nuevo.";
         }
@@ -227,8 +282,64 @@ public sealed partial class DashboardViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    public async Task SelectTopicAsync(TopicItemViewModel? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        SelectedTopic = item;
+        SelectedSessions.Clear();
+        SelectedTopicErrorMessage = null;
+        IsLoadingSelectedTopic = true;
+        var requestVersion = ++_sessionLoadVersion;
+
+        try
+        {
+            var sessions = await _sessionRepository.GetByTopicIdAsync(item.Id);
+
+            if (requestVersion != _sessionLoadVersion)
+            {
+                return;
+            }
+
+            foreach (var session in sessions)
+            {
+                SelectedSessions.Add(session);
+            }
+        }
+        catch (Exception)
+        {
+            if (requestVersion == _sessionLoadVersion)
+            {
+                SelectedTopicErrorMessage =
+                    "No se pudo cargar el historial de esta temática. Inténtalo de nuevo.";
+            }
+        }
+        finally
+        {
+            if (requestVersion == _sessionLoadVersion)
+            {
+                IsLoadingSelectedTopic = false;
+            }
+        }
+    }
+
+    [RelayCommand]
+    public void ClearSelectedTopic()
+    {
+        _sessionLoadVersion++;
+        SelectedTopic = null;
+        SelectedSessions.Clear();
+        SelectedTopicErrorMessage = null;
+        IsLoadingSelectedTopic = false;
+    }
+
     private async Task RefreshAsync()
     {
+        var selectedTopicId = SelectedTopic?.Id;
         var summaries = await _topicRepository.GetSummariesAsync();
         var items = summaries.Select(summary => new TopicItemViewModel(summary)).ToList();
 
@@ -237,6 +348,19 @@ public sealed partial class DashboardViewModel : ObservableObject
         foreach (var item in items)
         {
             Topics.Add(item);
+        }
+
+        if (selectedTopicId is not null)
+        {
+            var refreshedSelection = Topics.FirstOrDefault(topic => topic.Id == selectedTopicId);
+            if (refreshedSelection is null)
+            {
+                ClearSelectedTopic();
+            }
+            else
+            {
+                await SelectTopicAsync(refreshedSelection);
+            }
         }
 
         UpdateSummary();
