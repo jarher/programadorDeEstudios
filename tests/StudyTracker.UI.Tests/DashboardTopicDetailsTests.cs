@@ -136,6 +136,10 @@ public sealed class DashboardTopicDetailsTests
                     dashboard,
                     button => AutomationProperties.GetName(button) == "Ver detalles de Biología");
                 Assert.NotNull(topicButton);
+                var buttonPosition = TopicBounds(topicButton, dashboard);
+                var checkboxPosition = TopicBounds(completionCheckbox, dashboard);
+                Assert.True(buttonPosition.Contains(checkboxPosition),
+                    "El checkbox debe quedar dentro de la tarjeta de la temática.");
                 _ = dashboard.Dispatcher.BeginInvoke(
                     new Action(() => topicButton.RaiseEvent(
                         new RoutedEventArgs(ButtonBase.ClickEvent, topicButton))),
@@ -193,6 +197,12 @@ public sealed class DashboardTopicDetailsTests
         }
 
         throw new TimeoutException("La ventana modal de detalle no se abrió.");
+    }
+
+    private static Rect TopicBounds(FrameworkElement element, FrameworkElement relativeTo)
+    {
+        var topLeft = element.TranslatePoint(new Point(0, 0), relativeTo);
+        return new Rect(topLeft, element.RenderSize);
     }
 
     private static Task RunOnStaAsync(Func<Task> action)

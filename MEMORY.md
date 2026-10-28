@@ -4,7 +4,7 @@
 **Última Actualización**: 2026-10-28
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
 **Último hito cerrado**: T-6.1 — detalle modal, pruebas WPF y empaquetado (2026-10-28)
-**Estado global**: Fases 1-6 completadas
+**Estado global**: Fases 1-5 completadas; T-6.1 cerrada y T-6.2 en curso
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -37,6 +37,7 @@
 | Analítica | Vista navegable con mapa de calor, racha, dona LiveCharts2 y barras de metas (T-5.1/T-5.2/T-5.3) |
 | Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4/T-6.1) |
 | Detalle de temáticas | Ventana modal con resumen, sesiones y notas desde el dashboard (T-6.1) |
+| Tarjetas del dashboard | Layout alineado con la captura de referencia y checkbox integrado en la tarjeta (T-6.2 en curso) |
 
 ---
 
@@ -49,9 +50,9 @@
 | Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
 | Fase 4 — Temporizador y mini-widget | 4 | 4/4 | **Completada** |
 | Fase 5 — Mapa de calor y analítica | 4 | 4/4 | **Completada** |
-| Fase 6 — Detalle de temáticas y publicación | 1 | 1/1 | **Completada** |
+| Fase 6 — Detalle de temáticas y publicación | 2 | 1/2 | **En curso** |
 
-**Próxima tarea**: Definir el siguiente bloque de trabajo.
+**Próxima tarea**: Cerrar T-6.2 tras quality gate, publicación win-x64 y sincronización en GitHub.
 
 ---
 
@@ -86,6 +87,7 @@
 | 2026-10-27 | T-5.3 | — (sin commit) | Copilot | build UI 0/0; tests 29/29 | Dona LiveCharts2 con porcentajes y tiempo por temática; barras horizontales de metas con detalle de avance |
 | 2026-10-27 | T-5.4 | — (sin commit) | Copilot | build/publish win-x64 OK; tests 29/29 | Prueba de integración SQLite→analítica→resúmenes y perfil autocontenido single-file de Windows x64 |
 | 2026-10-28 | T-6.1 | `dc310b3` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Ventana modal con resumen, historial/notas; prueba de interacción WPF y paquete instalado por usuario |
+| 2026-10-28 | T-6.2 | — (en curso) | Copilot | tests 32/32; publish/installer pendientes | Alinear tarjeta de temática con la captura, conservar acciones accesibles y actualizar el paquete |
 
 ---
 

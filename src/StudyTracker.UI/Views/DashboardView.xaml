@@ -403,14 +403,8 @@
                                   HorizontalContentAlignment="Stretch">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <ui:Button Grid.Column="0"
-                                               Appearance="Transparent"
+                                <Grid Margin="0,0,0,16">
+                                    <ui:Button Appearance="Transparent"
                                                Padding="0"
                                                HorizontalContentAlignment="Stretch"
                                                VerticalContentAlignment="Stretch"
@@ -419,77 +413,88 @@
                                         <ui:Card Style="{StaticResource TopicCard}"
                                                  Padding="16,14">
                                             <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Border Width="4"
-                                                CornerRadius="2"
-                                                Margin="0,2,0,2"
-                                                VerticalAlignment="Stretch"
-                                                Background="{Binding ColorHex, Converter={StaticResource HexToBrush}}" />
-
-                                        <StackPanel Grid.Column="1" Margin="14,0,16,0">
-                                            <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding Title}"
-                                                           FontSize="16"
-                                                           FontWeight="SemiBold"
-                                                           TextWrapping="Wrap"
-                                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                                           VerticalAlignment="Center" />
-                                                <Border Grid.Column="1"
-                                                        Style="{StaticResource StatusChip}"
-                                                        Margin="12,0,0,0">
-                                                    <TextBlock Style="{StaticResource StatusChipText}" />
-                                                </Border>
-                                            </Grid>
-
-                                            <TextBlock Text="{Binding Description}"
-                                                       Style="{StaticResource DescriptionText}" />
-
-                                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                                <TextBlock Text="{Binding StudiedTimeText}"
-                                                           FontSize="14"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
-                                                <TextBlock Text="·"
-                                                           FontSize="14"
-                                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
-                                                           Margin="8,0" />
-                                                <TextBlock Text="{Binding TargetText}"
-                                                           Style="{StaticResource MetaText}"
-                                                           VerticalAlignment="Center" />
-                                            </StackPanel>
-
-                                            <Grid Margin="0,10,0,0">
-                                                <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <ProgressBar Style="{StaticResource TopicProgressBar}"
-                                                             Value="{Binding ProgressPercentage, Mode=OneWay}"
-                                                             Margin="0,0,12,0"
-                                                             AutomationProperties.Name="Progreso de la temática" />
-                                                <TextBlock Grid.Column="1"
-                                                           Text="{Binding ProgressText}"
-                                                           FontSize="12"
-                                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                                           VerticalAlignment="Center" />
-                                            </Grid>
-                                        </StackPanel>
 
+                                                <Border Width="4"
+                                                        CornerRadius="2"
+                                                        Margin="0,2,0,2"
+                                                        VerticalAlignment="Stretch"
+                                                        Background="{Binding ColorHex, Converter={StaticResource HexToBrush}}" />
+
+                                                <Grid Grid.Column="1" Margin="14,0,46,0">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding Title}"
+                                                                   FontSize="16"
+                                                                   FontWeight="SemiBold"
+                                                                   TextWrapping="Wrap"
+                                                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                                   VerticalAlignment="Center" />
+                                                        <Border Grid.Column="1"
+                                                                Style="{StaticResource StatusChip}"
+                                                                Margin="12,0,0,0">
+                                                            <TextBlock Style="{StaticResource StatusChipText}" />
+                                                        </Border>
+                                                    </Grid>
+
+                                                    <TextBlock Grid.Row="1"
+                                                               Text="{Binding Description}"
+                                                               Style="{StaticResource DescriptionText}"
+                                                               Margin="0,8,0,0" />
+
+                                                    <StackPanel Grid.Row="2"
+                                                                Orientation="Horizontal"
+                                                                Margin="0,14,0,0">
+                                                        <TextBlock Text="{Binding StudiedTimeText}"
+                                                                   FontSize="14"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                        <TextBlock Text="·"
+                                                                   FontSize="14"
+                                                                   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                                                   Margin="8,0" />
+                                                        <TextBlock Text="{Binding TargetText}"
+                                                                   Style="{StaticResource MetaText}"
+                                                                   VerticalAlignment="Center" />
+                                                    </StackPanel>
+
+                                                    <Grid Grid.Row="3" Margin="0,12,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <ProgressBar Style="{StaticResource TopicProgressBar}"
+                                                                     Value="{Binding ProgressPercentage, Mode=OneWay}"
+                                                                     Margin="0,0,12,0"
+                                                                     AutomationProperties.Name="Progreso de la temática" />
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding ProgressText}"
+                                                                   FontSize="12"
+                                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                                   VerticalAlignment="Center" />
+                                                    </Grid>
+                                                </Grid>
                                             </Grid>
                                         </ui:Card>
                                     </ui:Button>
 
-                                    <CheckBox Grid.Column="1"
+                                    <CheckBox Panel.ZIndex="1"
+                                              HorizontalAlignment="Right"
                                               VerticalAlignment="Center"
-                                              Margin="8,0,0,12"
+                                              Margin="0,0,16,0"
                                               IsChecked="{Binding IsCompleted, Mode=OneWay}"
                                               Command="{Binding DataContext.ToggleCompletedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                               CommandParameter="{Binding}"
