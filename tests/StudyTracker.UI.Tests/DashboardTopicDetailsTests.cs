@@ -136,6 +136,14 @@ public sealed class DashboardTopicDetailsTests
                     dashboard,
                     button => AutomationProperties.GetName(button) == "Ver detalles de Biología");
                 Assert.NotNull(topicButton);
+                var topicList = Assert.IsType<System.Windows.Controls.ScrollViewer>(
+                    dashboard.FindName("TopicListScrollViewer"));
+                Assert.True(
+                    topicList.ViewportWidth >= dashboard.ActualWidth * 0.9,
+                    $"La lista ocupa {topicList.ViewportWidth:0} px de los {dashboard.ActualWidth:0} px disponibles.");
+                Assert.True(
+                    topicButton.ActualWidth >= topicList.ViewportWidth * 0.9,
+                    $"La tarjeta ocupa {topicButton.ActualWidth:0} px, pero la lista dispone de {topicList.ViewportWidth:0} px.");
                 var buttonPosition = TopicBounds(topicButton, dashboard);
                 var checkboxPosition = TopicBounds(completionCheckbox, dashboard);
                 Assert.True(buttonPosition.Contains(checkboxPosition),

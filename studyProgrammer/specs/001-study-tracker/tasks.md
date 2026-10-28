@@ -57,3 +57,4 @@
 
 - [x] **T-6.1**: Reemplazar el panel fijo de detalle por una ventana modal con resumen, historial y notas; verificar la interacción WPF, ejecutar las pruebas y empaquetar el instalador Windows x64.
 - [x] **T-6.2**: Ajustar las tarjetas de temáticas del dashboard al diseño de referencia, validar la ubicación del checkbox con pruebas WPF y actualizar el paquete Windows x64.
+- [x] **T-6.3**: Eliminar el espacio reservado por el panel de detalle retirado, forzar el ancho completo de las tarjetas y comprobarlo en la prueba de interacción WPF.
