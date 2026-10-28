@@ -3,8 +3,8 @@
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
 **Última Actualización**: 2026-10-28
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-6.1 — detalle modal, pruebas WPF y empaquetado (2026-10-28)
-**Estado global**: Fases 1-5 completadas; T-6.1 cerrada y T-6.2 en curso
+**Último hito cerrado**: T-6.2 — tarjetas de temáticas alineadas con la captura (2026-10-28)
+**Estado global**: Fases 1-6 completadas
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -35,9 +35,9 @@
 | Micro-journaling | `SessionJournalDialog` registra notas y sesiones finalizadas/detenidas en SQLite (T-4.3) |
 | Mini-widget y bandeja | `FloatingTimerWindow`, controles rápidos y bandeja para restaurar/salir (T-4.4) |
 | Analítica | Vista navegable con mapa de calor, racha, dona LiveCharts2 y barras de metas (T-5.1/T-5.2/T-5.3) |
-| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4/T-6.1) |
+| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4/T-6.1/T-6.2) |
 | Detalle de temáticas | Ventana modal con resumen, sesiones y notas desde el dashboard (T-6.1) |
-| Tarjetas del dashboard | Layout alineado con la captura de referencia y checkbox integrado en la tarjeta (T-6.2 en curso) |
+| Tarjetas del dashboard | Layout alineado con la captura de referencia y checkbox integrado en la tarjeta (T-6.2) |
 
 ---
 
@@ -50,9 +50,9 @@
 | Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
 | Fase 4 — Temporizador y mini-widget | 4 | 4/4 | **Completada** |
 | Fase 5 — Mapa de calor y analítica | 4 | 4/4 | **Completada** |
-| Fase 6 — Detalle de temáticas y publicación | 2 | 1/2 | **En curso** |
+| Fase 6 — Detalle de temáticas y publicación | 2 | 2/2 | **Completada** |
 
-**Próxima tarea**: Cerrar T-6.2 tras quality gate, publicación win-x64 y sincronización en GitHub.
+**Próxima tarea**: Definir el siguiente bloque de trabajo.
 
 ---
 
@@ -87,7 +87,7 @@
 | 2026-10-27 | T-5.3 | — (sin commit) | Copilot | build UI 0/0; tests 29/29 | Dona LiveCharts2 con porcentajes y tiempo por temática; barras horizontales de metas con detalle de avance |
 | 2026-10-27 | T-5.4 | — (sin commit) | Copilot | build/publish win-x64 OK; tests 29/29 | Prueba de integración SQLite→analítica→resúmenes y perfil autocontenido single-file de Windows x64 |
 | 2026-10-28 | T-6.1 | `dc310b3` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Ventana modal con resumen, historial/notas; prueba de interacción WPF y paquete instalado por usuario |
-| 2026-10-28 | T-6.2 | — (en curso) | Copilot | tests 32/32; publish/installer pendientes | Alinear tarjeta de temática con la captura, conservar acciones accesibles y actualizar el paquete |
+| 2026-10-28 | T-6.2 | `bbbc7ac` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Alinear tarjeta de temática con la captura y mantener el checkbox dentro de la tarjeta |
 
 ---
 
