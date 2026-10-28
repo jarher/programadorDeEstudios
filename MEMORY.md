@@ -1,10 +1,10 @@
 # MEMORY.md — Memoria General del Proyecto
 **Proyecto**: StudyProgrammer (Programador y Monitor de Estudios)  
 **Entorno**: Windows 11 | C# (.NET 8 LTS - `8.0.427`) | SQLite Local  
-**Última Actualización**: 2026-10-27  
+**Última Actualización**: 2026-10-28
 **Rama Activa**: `main` | **Remoto**: `https://github.com/jarher/programadorDeEstudios.git`  
-**Último hito cerrado**: T-5.4 — analítica, integración y publicación win-x64 (2026-10-27)
-**Estado global**: Fases 1-5 completadas (T-5.1 a T-5.4)
+**Último hito cerrado**: T-6.1 — detalle modal, pruebas WPF y empaquetado (2026-10-28)
+**Estado global**: Fases 1-6 completadas
 
 > Este es el **único** libro de desarrollo del proyecto. No existen memorias por submódulo.
 
@@ -14,11 +14,12 @@
 
 | Elemento | Estado |
 | :--- | :--- |
-| Solución `StudyTracker.sln` | Creada en la raíz con 3 proyectos |
+| Solución `StudyTracker.sln` | Creada en la raíz con 4 proyectos |
 | `StudyTracker.Core` | net8.0 + net8.0-windows10.0.19041.0; dominio, datos, temporizador y notificaciones |
 | `StudyTracker.UI` | net8.0-windows10.0.19041.0, WPF; shell Fluent con Mica, title bar y tema adaptable |
 | `StudyTracker.Core.Tests` | net8.0, xUnit; 29 pruebas (19 persistencia/analítica + 10 temporizador) |
-| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 29/29; publish autónomo win-x64 |
+| `StudyTracker.UI.Tests` | net8.0-windows, xUnit; 3 pruebas de carga del detalle y apertura modal WPF |
+| Gate de calidad | `dotnet build` 0 errores / 0 warnings; `dotnet test` 32/32; publish autónomo win-x64 |
 | Modelos de dominio | Implementados en `src/StudyTracker.Core/Models` (T-1.3) |
 | Esquema SQLite | `DatabaseInitializer` con tablas, índices y FK (T-1.4) |
 | Repositorios | `TopicRepository` y `SessionRepository` implementados (T-1.5/T-1.6) |
@@ -34,7 +35,8 @@
 | Micro-journaling | `SessionJournalDialog` registra notas y sesiones finalizadas/detenidas en SQLite (T-4.3) |
 | Mini-widget y bandeja | `FloatingTimerWindow`, controles rápidos y bandeja para restaurar/salir (T-4.4) |
 | Analítica | Vista navegable con mapa de calor, racha, dona LiveCharts2 y barras de metas (T-5.1/T-5.2/T-5.3) |
-| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4) |
+| Publicación | Perfil self-contained single-file para win-x64 en `artifacts/StudyProgrammer-final-win-x64/` (T-5.4/T-6.1) |
+| Detalle de temáticas | Ventana modal con resumen, sesiones y notas desde el dashboard (T-6.1) |
 
 ---
 
@@ -47,8 +49,9 @@
 | Fase 3 — Dashboard y temáticas | 4 | 4/4 | **Completada** |
 | Fase 4 — Temporizador y mini-widget | 4 | 4/4 | **Completada** |
 | Fase 5 — Mapa de calor y analítica | 4 | 4/4 | **Completada** |
+| Fase 6 — Detalle de temáticas y publicación | 1 | 1/1 | **Completada** |
 
-**Próxima tarea**: Fases 1-5 completadas; pendiente definir el siguiente bloque de trabajo.
+**Próxima tarea**: Definir el siguiente bloque de trabajo.
 
 ---
 
@@ -82,6 +85,7 @@
 | 2026-10-27 | T-5.2 | — (sin commit) | Copilot | build UI 0/0; tests 28/28 | Vista de analítica navegable con cuadrícula lunes-domingo, meses, 5 intensidades, tooltips y resumen de racha |
 | 2026-10-27 | T-5.3 | — (sin commit) | Copilot | build UI 0/0; tests 29/29 | Dona LiveCharts2 con porcentajes y tiempo por temática; barras horizontales de metas con detalle de avance |
 | 2026-10-27 | T-5.4 | — (sin commit) | Copilot | build/publish win-x64 OK; tests 29/29 | Prueba de integración SQLite→analítica→resúmenes y perfil autocontenido single-file de Windows x64 |
+| 2026-10-28 | T-6.1 | `dc310b3` | Copilot | build 0/0; tests 32/32; publish e instalador win-x64 OK | Ventana modal con resumen, historial/notas; prueba de interacción WPF y paquete instalado por usuario |
 
 ---
 

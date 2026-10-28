@@ -166,6 +166,8 @@ $commitArguments = @{
     Agent   = $Agent
     Remote  = $Remote
     NoPush  = $NoPush
+    Build   = -not $SkipBuild
+    Test    = -not $SkipTests
 }
 
 if (-not [string]::IsNullOrWhiteSpace($Scope)) {
